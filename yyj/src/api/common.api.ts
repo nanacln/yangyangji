@@ -1,0 +1,36 @@
+import {httpGet,httpPost } from "@/tool/http";
+import {
+  paramList,
+  growupRecordListModel,
+  recoredSaveModel,
+  registerInfo,
+  loginInfo,
+  userInfo,
+  relativerInfo,
+  BaseResponse,
+  updateUserInfo
+} from '@/types/common'
+
+// import {commonData} from '@/tool/type'
+//投递列表
+export function growuprecordList(params:paramList):Promise<BaseResponse<growupRecordListModel>>{
+  return httpGet<growupRecordListModel>("/api/recordList", params);
+}
+export function growuprecordSave(params:recoredSaveModel):Promise<BaseResponse<string>>{
+  return httpPost('/api/record/add',params)
+}
+export function imgUpload(params:FormData):Promise<BaseResponse<string>>{
+  return httpPost('/api/upload',params)
+}
+export function register(params:registerInfo):Promise<BaseResponse<string>>{
+  return httpPost('/api/register',params)
+}
+export function login(params:loginInfo):Promise<BaseResponse<userInfo>>{
+  return httpGet<userInfo>('/api/login',params)
+}
+export function userList():Promise<BaseResponse<relativerInfo>>{
+  return httpGet<relativerInfo>('/api/userlist',{})
+}
+export function updateUser(params:updateUserInfo){
+  return httpPost('/api/updateUser',params)
+}

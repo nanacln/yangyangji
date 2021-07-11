@@ -1,0 +1,122 @@
+@charset "UTF-8";
+/*reset*/
+* {
+	-webkit-tap-highlight-color: transparent;
+	outline: 0;
+	vertical-align: baseline;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+dl,
+dt,
+dd,
+ul,
+ol,
+li,
+pre,
+form,
+fieldset,
+legend,
+button,
+input,
+textarea,
+th,
+td {
+	margin: 0;
+	padding: 0;
+}
+article,
+aside,
+figure,
+footer,
+header,
+hgroup,
+nav,
+section {
+	display: block;
+}
+img {
+	border: 0 none;
+	vertical-align: top;
+}
+i,
+em {
+	font-style: normal;
+}
+ol,
+ul {
+	list-style: none;
+}
+input,
+select,
+button,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-size: 100%;
+	font-family: inherit;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+textarea {
+	font-size: 100%;
+	font-family: inherit;
+	resize: none;
+}
+del {
+	text-decoration: line-through;
+}
+a {
+	text-decoration: none;
+	color: #333;
+}
+a:hover {
+	text-decoration: none;
+}
+input[type='button'],
+input[type='submit'],
+input[type='reset'],
+input[type='text'],
+button,
+textarea {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+
+.edit-item,
+.sign-item {
+	padding-right: 50px;
+	padding-left: 40px;
+}
+#tcaptcha_transform {
+	transform: scale(0.8);
+}
+.loadMask {
+	background-color: #fff;
+	padding: 100px 0 40px;
+}
+.van-search__content {
+	border: 1px solid #ddd;
+	background-color: #fff;
+	padding: 0;
+}
+.van-search {
+	padding: 0;
+	.van-icon {
+		padding-left: 25px;
+		color: #a9a9a9;
+		font-size: 40px;
+	}
+}

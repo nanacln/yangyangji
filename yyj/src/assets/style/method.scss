@@ -1,0 +1,49 @@
+@mixin ellipsis($num: 1) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	word-break: break-all;
+
+	@if $num==1 {
+		white-space: nowrap;
+	} @else {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: $num;
+	}
+}
+
+@mixin fuwenben() {
+	h1,
+	h2,
+	h3,
+	h4 {
+		font-weight: bold;
+		line-height: 2;
+		color: #333;
+		padding-bottom: 20px;
+	}
+	h1 {
+		font-size: 64px; /*px*/
+	}
+	h2 {
+		font-size: 48px; /*px*/
+	}
+	h3 {
+		font-size: 36px; /*px*/
+	}
+	h4 {
+		font-size: 32px; /*px*/
+	}
+	img {
+		margin: 40px auto;
+		display: block;
+	}
+	strong {
+		font-weight: bold;
+	}
+	p {
+		font-size: 15px;
+		text-indent: 2em;
+		// margin-bottom: pxToRem(30);
+	}
+}
