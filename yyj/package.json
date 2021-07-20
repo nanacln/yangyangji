@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "alloyfinger": "^0.1.16",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
     "postcss-px-to-viewport": "^1.1.1",
@@ -15,6 +16,7 @@
     "ts-import-plugin": "^1.6.7",
     "vant": "^3.0.18",
     "vue": "^3.0.0",
+    "vue-mocropper": "2.0.0",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },

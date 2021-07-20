@@ -29,6 +29,14 @@
     placeholder="请输入您的个性签名"
   /> -->
 </van-cell-group>
+<van-uploader :after-read="afterRead" />
+<vue-mocropper 
+  v-model="visible" 
+  :src="imgSrc" 
+  @crop-done="handleCropDone"
+  :crop-width="200"
+  :crop-height="200"
+></vue-mocropper>
 <van-button style="margin-top:20px;" @click="update" type="primary" size="large">保存</van-button>
   </div>
 	<van-tabbar v-model="active" :route="true">
@@ -41,7 +49,7 @@
 <script lang="ts">
 import { defineComponent,reactive, toRefs,ref } from 'vue'
 import {getLocalStorage,setLocalStorage} from '@/tool/tool'
-import {updateUser}from '@/api/common.api'
+import {updateUser,updateUserAvatar}from '@/api/common.api'
 import { Toast } from 'vant'
 import {updateUserInfo
 } from '@/types/common'
@@ -59,6 +67,23 @@ export default defineComponent({
 				},
 				showPicker: false,
 			})
+			let visible=ref(false)
+			let imgSrc=ref('')
+			const handleCropDone=(data:any)=>{
+				console.log(data,1111);
+				updateUserAvatar({file:data,userId:getLocalStorage('userId')})
+				.then(res=>{
+					console.log(res);
+					
+				})
+				
+			}
+			const afterRead=(file:any,detail:any)=>{
+				console.log(file,detail);
+				visible.value=true
+				imgSrc.value=file.content
+
+			}
     const columns = [
 				'妈妈',
 				'爸爸',
@@ -95,7 +120,11 @@ export default defineComponent({
         columns,
 				onConfirm,
 				active,
-				update
+				update,
+				handleCropDone,
+				visible,
+				afterRead,
+				imgSrc
       }
   },
 })

@@ -47,6 +47,7 @@ const userSchema = mongoose.Schema({
 	role: String,
 	nickName: String,
 	userId: Number,
+	avatar: String
 })
 const UserList = mongoose.model('UserList', userSchema, 'UserList')
 
@@ -388,6 +389,30 @@ app.post('/api/updateUser', (req, res) => {
 
 	// 	})
 	// })
+})
+app.post('/api/uploadUserAvatar',(req,res)=>{
+	const path = 'static/imgs/'+ Date.now() +'.png';
+	const base64 = req.body.file.replace(/^data:image\/\w+;base64,/, "");//去掉图片base64码前面部分data:image/png;base64
+	const dataBuffer = new Buffer(base64, 'base64'); //把base64码转成buffer对象，
+	let prefix = 'http://localhost:8666/'
+	fs.writeFile(path, dataBuffer, function(err){//用fs写入文件
+			if(err){
+					console.log(err);
+			}else{
+				UserList.updateOne({userId:Number(req.body.userId)},{ $set: { avatar: prefix + path } },(err)=>{
+					if(err){
+						return
+					}
+					
+					res.send({
+						code: 200,
+						msg: '请求成功',
+						data: prefix + path,
+					})
+				})
+				
+			}
+	})
 })
 http.listen('8666')
 // app.listen('8666')

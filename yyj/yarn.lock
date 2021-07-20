@@ -1855,6 +1855,11 @@ ajv@^6.1.0, ajv@^6.10.0, ajv@^6.10.2, ajv@^6.12.2, ajv@^6.12.3, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
+alloyfinger@^0.1.16:
+  version "0.1.16"
+  resolved "https://registry.npm.taobao.org/alloyfinger/download/alloyfinger-0.1.16.tgz#8d5d46073cf1fedba5f446e666bc4b3925b8b8b5"
+  integrity sha1-jV1GBzzx/tul9EbmZrxLOSW4uLU=
+
 alphanum-sort@^1.0.0:
   version "1.0.2"
   resolved "https://registry.npm.taobao.org/alphanum-sort/download/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
@@ -8937,6 +8942,11 @@ vue-loader@^15.9.2:
     loader-utils "^1.1.0"
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
+
+vue-mocropper@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.nlark.com/vue-mocropper/download/vue-mocropper-2.0.0.tgz#98f863db527bb7748b4ec6ecacdb10b205f60c63"
+  integrity sha1-mPhj21J7t3SLTsbsrNsQsgX2DGM=
 
 vue-router@^4.0.0-0:
   version "4.0.8"
