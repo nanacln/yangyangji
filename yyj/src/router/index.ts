@@ -40,6 +40,9 @@ const routes = [
   {
     path:'/mine',
     name:'Mine',
+    meta: {
+      requiresAuth: true // 添加该字段，表示进入这个路由是需要登录的
+    },
     component:()=>import('../views/Mine/Index.vue')
   },
   // 404
@@ -75,6 +78,7 @@ router.beforeEach((to, from, next) => {
   const path = to.matched.filter(v => v.meta.requiresAuth);
   if (path.length) {
     const metaName = path[0].meta.requiresAuth;
+    
     if (metaName && !localStorage.getItem("userId")) {
       localStorage.setItem("ucm_curUrl", path[0].path);
       next({
