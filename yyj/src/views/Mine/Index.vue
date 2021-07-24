@@ -1,6 +1,9 @@
 <template>
   <div class="mine-box">
-    <img src="~@/assets/images/person.png" alt="" class="mine-img">
+		
+    <img v-if="avatar" :src="avatar" alt="" class="mine-img">
+    <img v-else src="~@/assets/images/person.png" alt="" class="mine-img">
+		<van-uploader :after-read="afterRead" class="mine-upload" />
     <van-cell-group inset>
   <van-field
     v-model="form.nickName"
@@ -29,7 +32,7 @@
     placeholder="请输入您的个性签名"
   /> -->
 </van-cell-group>
-<van-uploader :after-read="afterRead" />
+
 <vue-mocropper 
   v-model="visible" 
   :src="imgSrc" 
@@ -57,14 +60,17 @@ export default defineComponent({
   setup() {
     interface stateModel {
 				showPicker: boolean
-				form: updateUserInfo
+				form: updateUserInfo,
+				avatar:string
 			}
 			const state = reactive<stateModel>({
 				form: {
 					role: getLocalStorage('role'),
 					nickName: getLocalStorage('nickName'),
-					userId:getLocalStorage('userId')
+					userId:getLocalStorage('userId'),
+					
 				},
+				avatar:getLocalStorage('avatar')||'',
 				showPicker: false,
 			})
 			let visible=ref(false)
@@ -73,13 +79,17 @@ export default defineComponent({
 				console.log(data,1111);
 				updateUserAvatar({file:data,userId:getLocalStorage('userId')})
 				.then(res=>{
-					console.log(res);
+					if(res.code===200){
+						Toast.success('头像修改成功')
+						visible.value=false
+						state.avatar=res.data
+						setLocalStorage('avatar',res.data)
+					}
 					
 				})
 				
 			}
 			const afterRead=(file:any,detail:any)=>{
-				console.log(file,detail);
 				visible.value=true
 				imgSrc.value=file.content
 
@@ -135,5 +145,18 @@ export default defineComponent({
 	height: 160px;
 	margin:160px auto 100px;
 	display: block;
+	border-radius: 100%;
+}
+.mine{
+	&-upload{
+		position: absolute;
+		top:160px;
+		width:160px;
+		height: 160px;
+		left:0;
+		right: 0;
+		margin:0 auto;
+		opacity: 0;
+	}
 }
 </style>

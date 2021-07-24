@@ -34,5 +34,5 @@ export function updateUser(params:updateUserInfo){
   return httpPost('/api/updateUser',params)
 }
 export function updateUserAvatar(params:any){
-  return httpPost('/api/uploadUserAvatar',params)
+  return httpPost<string>('/api/uploadUserAvatar',params)
 }

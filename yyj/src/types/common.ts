@@ -45,7 +45,8 @@ export type loginInfo={
 export type userInfo={
   role:string,
   nickName:string,
-  userId:string
+  userId:string,
+  
 }
 export type relativerInfo={
   nickName:string,
@@ -63,5 +64,5 @@ export interface BaseResponse<T> {
 export type updateUserInfo={
   role:string,
   userId:string,
-  nickName:string
+  nickName:string,
 }
