@@ -21,22 +21,7 @@ const talkSchema=mongoose.Schema({
   content:String
 })
 var TalkList=mongoose.model('TalkList',talkSchema,'TalkList')
-// var tl=new TalkList({
-//   userId:1,
-//   toUserId:2,
-//   content:'hello'
-// })
-// tl.save((err)=>{
-//   if(err){
 
-//   }
-//   TalkList.find({},(err,data)=>{
-//     if(err){
-//       console.log('ss');
-//     }
-//     console.log(data,66666);
-//   })
-// })
 const server = new WebSocket.Server({ port: 3000 });
 
 server.on('open', function open() {
@@ -48,36 +33,36 @@ server.on('close', function close() {
 });
 
 server.on('connection', function connection(ws, req) {
-  const ip = req.connection.remoteAddress;
-  const port = req.connection.remotePort;
-  console.log(req,8888888);
+  const ip = req.socket.remoteAddress;
+  const port = req.socket.remotePort;
   const clientName = ip + port;
-
   console.log('%s is connected', clientName)
-
+  ws.name=clientName
   // 发送欢迎信息给客户端
   ws.send("Welcome " + clientName);
 
   ws.on('message', function incoming(message) {
     console.log('received: %s from %s', message, clientName);
-    const {userId,toUserId}=message
-    if(userId&&toUserId){
-      var tl=new TalkList({
-        userId:1,
-        toUserId:2,
-        content:'hello'
-      })
-      tl.save((err)=>{
-        if(err){
-          console.log('存储失败');
-          ws.send({type:'error'})
-        }
+    // const msg=JSON.parse(message)
+    // let type=message.type
+    // const {userId,toUserId}=message
+    // if(userId&&toUserId){
+    //   var tl=new TalkList({
+    //     userId:1,
+    //     toUserId:2,
+    //     content:'hello'
+    //   })
+    //   tl.save((err)=>{
+    //     if(err){
+    //       console.log('存储失败');
+    //       ws.send({type:'error'})
+    //     }
 
-      })
-    }
+    //   })
+    // }
     // 广播消息给所有客户端
     server.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
+      if (client.readyState === WebSocket.OPEN&&client.name!==clientName) {
         client.send( clientName + " -> " + message);
       }
     });

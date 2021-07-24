@@ -59,6 +59,12 @@
 	export default defineComponent({
 		name: 'Home',
 		setup() {
+			type msgtype={
+				type:number,
+				content:any,
+				userId?:number,
+				toUserId?:number
+			}
 			type stateModel = {
 				list: growupRecordArr
 				loading: boolean
@@ -82,7 +88,11 @@
 			const websocket =new WebSocket('ws://localhost:3000/')
 			websocket.addEventListener('open',()=>{
 				console.log('建立连接');
-				websocket.send('nihao')
+				// type  1上线  2私聊  3 群聊
+
+				var msg:msgtype={type:1,content:'上线啦',userId:2}
+				
+				websocket.send(JSON.stringify(msg))
 			})
 			websocket.addEventListener('message',(data)=>{
 				console.log(data,6666);
