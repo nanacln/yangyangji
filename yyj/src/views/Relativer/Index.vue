@@ -1,11 +1,11 @@
 <template>
-	<ul class="qyt-box">
-		<li class="qyt-item" v-for="item in list" :key="item.userId">
+	<div class="qyt-box">
+		<router-link :to="`/chatsingle?to=${item.userId}&name=${item.nickName}&avatar=${item.avatar||''}`" class="qyt-item" v-for="item in list" :key="item.userId">
 			<img class="qyt-userImg" v-if="item.avatar" :src="item.avatar" />
 			<img class="qyt-userImg" v-else src="~@/assets/images/person.png" />
 			<div class="qyt-name">{{item.nickName}}</div>
-		</li>
-	</ul>
+		</router-link>
+	</div>
 	<van-tabbar v-model="active" :route="true">
 		<van-tabbar-item to="/home" icon="home-o">首页</van-tabbar-item>
 		<!-- <van-tabbar-item icon="search">标签</van-tabbar-item> -->
@@ -57,6 +57,7 @@
 		margin-left:30px;
 		align-items: center;
 		padding:20px 0;
+		color:#333;
 	}
 	&-name{
 		flex:1;

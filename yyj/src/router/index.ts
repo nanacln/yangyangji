@@ -45,6 +45,14 @@ const routes = [
     },
     component:()=>import('../views/Mine/Index.vue')
   },
+  {
+    path:'/chatsingle',
+    name:'ChatSingle',
+    meta: {
+      requiresAuth: true // 添加该字段，表示进入这个路由是需要登录的
+    },
+    component:()=>import('../views/Chat/Index.vue')
+  },
   // 404
   {
     path: "/:pathMatch(.*)*",
