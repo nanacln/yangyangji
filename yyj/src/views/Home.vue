@@ -59,12 +59,6 @@
 	export default defineComponent({
 		name: 'Home',
 		setup() {
-			type msgtype={
-				type:number,
-				content:any,
-				userId?:number,
-				toUserId?:number
-			}
 			type stateModel = {
 				list: growupRecordArr
 				loading: boolean
@@ -83,23 +77,20 @@
 					pageNo: 1,
 				},
 			})
-			// ImagePreview(['https://img.yzcdn.cn/vant/apple-1.jpg'])
-			// const websocket =new WebSocket('ws://echo.websocket.org/')
-			const websocket =new WebSocket('ws://localhost:3000/')
-			websocket.addEventListener('open',()=>{
-				console.log('建立连接');
-				// type  1上线  2私聊  3 群聊
+			// const websocket =new WebSocket('ws://localhost:3000/')
+			// websocket.addEventListener('open',()=>{
+			// 	console.log('建立连接');
+			// 	// type  1上线  2私聊  3 群聊
 
-				var msg:msgtype={type:1,content:'上线啦',userId:2}
-				
-				websocket.send(JSON.stringify(msg))
-			})
-			websocket.addEventListener('message',(data)=>{
-				console.log(data,6666);
-				
-			})
-			// const socket = io('ws://echo.websocket.org/')
-			// socket.emit('chat message', 'hello nana')
+			// 	var msg:msgtype={type:1,content:'上线啦',userId:2}
+
+			// 	websocket.send(JSON.stringify(msg))
+			// })
+			// websocket.addEventListener('message',(data)=>{
+			// 	console.log(data,6666);
+
+			// })
+
 			const onLoad = () => {
 				// 异步更新数据
 				growuprecordList(state.params).then(res => {

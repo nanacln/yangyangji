@@ -1,5 +1,5 @@
 // var ws = require("nodejs-websocket")
- 
+
 // Scream server example: "hi" -> "HI!!!"
 // var server = ws.createServer(function (conn) {
 //     console.log("New connection")
@@ -12,79 +12,81 @@
 //     })
 // }).listen(3000)
 
-const mongoose=require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/yangyangji',{ useNewUrlParser: true,useUnifiedTopology: true  })
-const WebSocket = require('ws');
-const talkSchema=mongoose.Schema({
-  userId:Number,
-  toUserId:Number,
-  content:String
+const mongoose = require('mongoose')
+mongoose.connect('mongodb://127.0.0.1:27017/yangyangji', {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
 })
-var TalkList=mongoose.model('TalkList',talkSchema,'TalkList')
+const WebSocket = require('ws')
+const talkSchema = mongoose.Schema({
+	userId: Number,
+	toUserId: Number,
+	content: String,
+})
+var TalkList = mongoose.model('TalkList', talkSchema, 'TalkList')
 
-const server = new WebSocket.Server({ port: 3000 });
+const server = new WebSocket.Server({ port: 3000 })
 
 server.on('open', function open() {
-  console.log('connected');
-});
+	console.log('connected')
+})
 
 server.on('close', function close() {
-  console.log('disconnected');
-});
+	console.log('disconnected')
+})
 
 server.on('connection', function connection(ws, req) {
-  const ip = req.socket.remoteAddress;
-  const port = req.socket.remotePort;
-  const clientName = ip + port;
-  console.log('%s is connected', clientName)
-  ws.name=clientName
-  // 发送欢迎信息给客户端
-  ws.send("Welcome " + clientName);
+	const ip = req.socket.remoteAddress
+	const port = req.socket.remotePort
+	const clientName = ip + port
+	console.log('%s is connected', clientName)
+	// ws.name=clientName
+	// 发送欢迎信息给客户端
+	ws.send('Welcome ' + clientName)
 
-  ws.on('message', function incoming(message) {
-    console.log('received: %s from %s', message, clientName);
-    // const msg=JSON.parse(message)
-    // let type=message.type
-    // const {userId,toUserId}=message
-    // if(userId&&toUserId){
-    //   var tl=new TalkList({
-    //     userId:1,
-    //     toUserId:2,
-    //     content:'hello'
-    //   })
-    //   tl.save((err)=>{
-    //     if(err){
-    //       console.log('存储失败');
-    //       ws.send({type:'error'})
-    //     }
+	ws.on('message', function incoming(message) {
+		const msg = JSON.parse(message)
+		if (msg.type === '1') {
+			ws.name = msg.userId
+		} else if (msg.type === '2') {
+			var tl = new TalkList(msg)
+			tl.save(err => {
+				if (err) {
+					console.log('存储失败')
+					ws.send({ type: '0', content: msg.content })
+					return
+				}
+				server.clients.forEach(function each(client) {
+					if (
+						client.readyState === WebSocket.OPEN &&
+						client.name === msg.toUserId
+					) {
+						client.send(message)
+					}
+				})
+			})
+		}
+		console.log('received: %s from %s', message, clientName)
 
-    //   })
-    // }
-    // 广播消息给所有客户端
-    server.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN&&client.name!==clientName) {
-        client.send( clientName + " -> " + message);
-      }
-    });
-
-  });
-
-});
-
+		// // 广播消息给所有客户端
+		// server.clients.forEach(function each(client) {
+		// 	if (client.readyState === WebSocket.OPEN && client.name !== clientName) {
+		// 		client.send(clientName + ' -> ' + message)
+		// 	}
+		// })
+	})
+})
 
 // const app = require('express')();
 // const server = require('http').Server(app);
 // const io = require('socket.io')(server);
-// io.on('connection', (socket) => { 
+// io.on('connection', (socket) => {
 //   console.log('client connect server, ok!');
 //     socket.on('chat message',(data)=>{
 //     console.log(data,'1111111');
 //   })
 //  });
 // server.listen(3000);
-
-
-
 
 // let express = require('express');
 // let app=express()
@@ -103,9 +105,9 @@ server.on('connection', function connection(ws, req) {
 // // app.use('/static',express.static('static'))
 // app.listen(3000,()=>{
 //   console.log('启动成功');
-  
+
 //   // 服务端监听连接状态：io的connection事件表示客户端与服务端成功建立连接，它接收一个回调函数，回调函数会接收一个socket参数。
-  
+
 // });
 
 // // 服务端监听连接状态：io的connection事件表示客户端与服务端成功建立连接，它接收一个回调函数，回调函数会接收一个socket参数。
@@ -124,7 +126,7 @@ server.on('connection', function connection(ws, req) {
 //   // socket.on('disconnect', ()=>{
 //   //   console.log('connect disconnect');
 //   // });
-  
+
 //   // // 与客户端对应的接收指定的消息
 //   // socket.on('client message', (data)=>{
 //   //   cosnole.log(data);// hi server

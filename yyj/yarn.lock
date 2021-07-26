@@ -8943,10 +8943,10 @@ vue-loader@^15.9.2:
     vue-hot-reload-api "^2.3.0"
     vue-style-loader "^4.1.0"
 
-vue-mocropper@2.0.0:
-  version "2.0.0"
-  resolved "https://registry.nlark.com/vue-mocropper/download/vue-mocropper-2.0.0.tgz#98f863db527bb7748b4ec6ecacdb10b205f60c63"
-  integrity sha1-mPhj21J7t3SLTsbsrNsQsgX2DGM=
+vue-mocropper@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.nlark.com/vue-mocropper/download/vue-mocropper-2.0.1.tgz#20ef03afa8034e7a4c9020abb2e9e4a05046ab2f"
+  integrity sha1-IO8Dr6gDTnpMkCCrsunkoFBGqy8=
 
 vue-router@^4.0.0-0:
   version "4.0.8"

@@ -16,7 +16,7 @@
     "ts-import-plugin": "^1.6.7",
     "vant": "^3.0.18",
     "vue": "^3.0.0",
-    "vue-mocropper": "2.0.0",
+    "vue-mocropper": "^2.0.1",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
   },
