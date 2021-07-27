@@ -50,7 +50,7 @@ server.on('connection', function connection(ws, req) {
 		const msg = JSON.parse(message)
 		if (msg.type === '1') {
 			ws.name = msg.userId
-			TalkList.find({ toUserId: Number(msg.userId) }).exec((err, data) => {
+			TalkList.find({ toUserId: Number(msg.userId),sendSuccess:false }).exec((err, data) => {
 				if (err) {
 					console.log(err)
 					return
@@ -69,6 +69,7 @@ server.on('connection', function connection(ws, req) {
 					type: '9', //返回未读消息情况
 				}
 				ws.send(JSON.stringify(info))
+				
 				// })
 			})
 		} else if (msg.type === '2') {
@@ -107,6 +108,7 @@ server.on('connection', function connection(ws, req) {
 			TalkList.find({
 				toUserId: Number(msg.userId),
 				userId: Number(msg.toUserId),
+				sendSuccess:false
 			}).exec((err, data) => {
 				if (err) {
 					console.log(err)
@@ -114,6 +116,12 @@ server.on('connection', function connection(ws, req) {
 				}
 				if (data.length < 1) return
 				ws.send(JSON.stringify(data))
+				TalkList.updateMany({toUserId: Number(msg.userId),sendSuccess:false},{$set:{sendSuccess:true}},(err,data)=>{
+					if(err){
+						console.log(err);
+						return
+					}
+				})
 				// })
 			})
 		}

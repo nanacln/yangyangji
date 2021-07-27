@@ -83,8 +83,11 @@
 				const info = JSON.parse(data.data)
 				if (info.type === '9') {
 					return
+				}else if(info instanceof Array){
+					state.chatArr=state.chatArr.concat(info)
+				}else{
+					state.chatArr.push(info)
 				}
-				state.chatArr.push(info)
 				setLocalStorage(
 					'chat' + route.query.toUserId,
 					JSON.stringify(state.chatArr)
