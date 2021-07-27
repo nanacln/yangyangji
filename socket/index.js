@@ -22,6 +22,8 @@ const talkSchema = mongoose.Schema({
 	userId: Number,
 	toUserId: Number,
 	content: String,
+	sendSuccess: Boolean,
+	id: Number,
 })
 var TalkList = mongoose.model('TalkList', talkSchema, 'TalkList')
 
@@ -42,14 +44,39 @@ server.on('connection', function connection(ws, req) {
 	console.log('%s is connected', clientName)
 	// ws.name=clientName
 	// 发送欢迎信息给客户端
-	ws.send('Welcome ' + clientName)
+	// ws.send('Welcome ' + clientName)
 
 	ws.on('message', function incoming(message) {
 		const msg = JSON.parse(message)
 		if (msg.type === '1') {
 			ws.name = msg.userId
+			TalkList.find({ toUserId: Number(msg.userId) }).exec((err, data) => {
+				if (err) {
+					console.log(err)
+					return
+				}
+				if (data.length < 1) return
+				let unreadMsg = {}
+				for (let i = 0; i < data.length; i++) {
+					if (unreadMsg[data[i].userId]) {
+						unreadMsg[data[i].userId]++
+					} else {
+						unreadMsg[data[i].userId] = 1
+					}
+				}
+				const info = {
+					unreadMsg,
+					type: '9', //返回未读消息情况
+				}
+				ws.send(JSON.stringify(info))
+				// })
+			})
 		} else if (msg.type === '2') {
+			const id = new Date().getTime() + ''
+			msg.id = id
+			msg.sendSuccess = false
 			var tl = new TalkList(msg)
+
 			tl.save(err => {
 				if (err) {
 					console.log('存储失败')
@@ -62,8 +89,32 @@ server.on('connection', function connection(ws, req) {
 						client.name === msg.toUserId
 					) {
 						client.send(message)
+						TalkList.updateOne(
+							{ id },
+							{ $set: { sendSuccess: true } },
+							(err, data) => {
+								if (err) {
+									console.log(err)
+									return
+								}
+								console.log('修改成功7777')
+							}
+						)
 					}
 				})
+			})
+		} else if (msg.type === '4') {
+			TalkList.find({
+				toUserId: Number(msg.userId),
+				userId: Number(msg.toUserId),
+			}).exec((err, data) => {
+				if (err) {
+					console.log(err)
+					return
+				}
+				if (data.length < 1) return
+				ws.send(JSON.stringify(data))
+				// })
 			})
 		}
 		console.log('received: %s from %s', message, clientName)

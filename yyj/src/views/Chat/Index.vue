@@ -48,12 +48,14 @@
 				name: string
 				userId: string
 				chatArr: msgtype[]
+				unreadObj: any
 			}
 			const state = reactive<stateModel>({
 				msg: '',
 				name: route.query.name as string,
 				userId: getLocalStorage('userId') as string,
 				chatArr: [],
+				unreadObj: {},
 			})
 			if (getLocalStorage('chat' + route.query.toUserId)) {
 				state.chatArr = JSON.parse(
@@ -66,19 +68,23 @@
 			const websocket = new WebSocket('ws://localhost:3000/')
 			websocket.addEventListener('open', () => {
 				console.log('建立连接')
-				// type  1上线  2私聊  3 群聊  0服务器存储消息失败
+				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
 
 				var msg: msgtype = {
-					type: '1',
-					content: '上线啦',
+					type: '4',
+					content: '私聊啦',
 					userId: getLocalStorage('userId'),
+					toUserId: route.query.toUserId as string,
 				}
 
 				websocket.send(JSON.stringify(msg))
 			})
 			websocket.addEventListener('message', data => {
-				console.log(data, 6666)
-				state.chatArr.push(JSON.parse(data.data))
+				const info = JSON.parse(data.data)
+				if (info.type === '9') {
+					return
+				}
+				state.chatArr.push(info)
 				setLocalStorage(
 					'chat' + route.query.toUserId,
 					JSON.stringify(state.chatArr)
