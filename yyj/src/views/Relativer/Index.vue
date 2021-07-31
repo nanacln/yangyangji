@@ -1,5 +1,13 @@
 <template>
 	<div class="qyt-box">
+		<router-link to="/chatgroup" class="qyt-item">
+			<van-badge :content="unreadObj.groupsNum || ''">
+				<img class="qyt-userImg" src="~@/assets/images/group.png" />
+			</van-badge>
+			<div class="qyt-name">
+				广播室
+			</div>
+		</router-link>
 		<div v-for="item in list" :key="item.userId">
 			<router-link
 				v-if="item.userId != userId"

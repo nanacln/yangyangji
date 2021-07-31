@@ -53,6 +53,14 @@ const routes = [
     },
     component:()=>import('../views/Chat/Index.vue')
   },
+  {
+    path:'/chatgroup',
+    name:'ChatGroup',
+    meta: {
+      requiresAuth: true // 添加该字段，表示进入这个路由是需要登录的
+    },
+    component:()=>import('../views/Chat/Group.vue')
+  },
   // 404
   {
     path: "/:pathMatch(.*)*",

@@ -1,7 +1,7 @@
 <template>
 	<div class="chat-box">
 		<van-nav-bar
-			:title="name"
+			title="广播室"
 			left-text="返回"
 			left-arrow
 			@click-left="onClickLeft"

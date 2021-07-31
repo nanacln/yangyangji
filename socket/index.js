@@ -25,8 +25,23 @@ const talkSchema = mongoose.Schema({
 	sendSuccess: Boolean,
 	id: Number,
 })
+const groupTalkSchema = mongoose.Schema({
+	userId: Number,
+	content: String,
+	id: Number,
+	groupIds: String,
+})
+const userSchema = mongoose.Schema({
+	username: String,
+	password: String,
+	role: String,
+	nickName: String,
+	userId: Number,
+	avatar: String,
+})
+const UserList = mongoose.model('UserList', userSchema, 'UserList')
 var TalkList = mongoose.model('TalkList', talkSchema, 'TalkList')
-
+const groupList = mongoose.model('GroupList', groupTalkSchema, 'GroupList')
 const server = new WebSocket.Server({ port: 3000 })
 
 server.on('open', function open() {
@@ -132,6 +147,56 @@ server.on('connection', function connection(ws, req) {
 					}
 				)
 			})
+		} else if (msg.type === '3') {
+			const id = new Date().getTime() + ''
+			msg.id = id
+			msg.groupIds = ''
+			const sendArr = [msg.userId - 0]
+			var groupsTl = new groupList(msg)
+			groupsTl.save(err => {
+				if (err) {
+					ws.send({ type: '0', content: msg.content })
+					return
+				}
+				server.clients.forEach(function each(client) {
+					if (
+						client.readyState === WebSocket.OPEN &&
+						client.name != msg.userId
+					) {
+						sendArr.push(client.name - 0)
+						console.log('00000', client.name)
+
+						client.send(message)
+					}
+				})
+				UserList.find({}).exec((err, data) => {
+					if (err) {
+						return
+					}
+
+					let arr = data.filter(item => sendArr.indexOf(item.userId) === -1)
+
+					var str = ''
+					for (let i = 0; i < arr.length; i++) {
+						i === arr.length - 1
+							? (str += arr[i].userId)
+							: (str += arr[i].userId + ',')
+					}
+					groupList.updateOne(
+						{ id },
+						{ $set: { groupIds: str } },
+						(err, data) => {
+							if (err) {
+								console.log(err)
+								return
+							}
+							console.log('修改成功8888')
+						}
+					)
+				})
+			})
+		} else if (msg.type === '5') {
+			ws.name = msg.userId
 		}
 		console.log('received: %s from %s', message, clientName)
 
