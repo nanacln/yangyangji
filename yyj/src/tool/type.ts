@@ -44,5 +44,6 @@ export type msgtype = {
   type: string
   content: any
   userId?: string
-  toUserId?: string
+  toUserId?: string,
+  data?:msgtype[]
 }

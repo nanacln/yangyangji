@@ -135,7 +135,7 @@ server.on('connection', function connection(ws, req) {
 					return
 				}
 				if (data.length < 1) return
-				ws.send(JSON.stringify(data))
+				ws.send(JSON.stringify({data,type:"4"}))
 				TalkList.updateMany(
 					{ toUserId: Number(msg.userId), sendSuccess: false },
 					{ $set: { sendSuccess: true } },
@@ -204,7 +204,7 @@ server.on('connection', function connection(ws, req) {
 					return
 				}
 				if (data.length < 1) return
-				ws.send(JSON.stringify(data))
+				ws.send(JSON.stringify({data,type:'5'}))
 				for(let i=0;i<data.length;i++){
 					let arr=data[i].groupIds.split(',')
 					let num=arr.indexOf(msg.userId)

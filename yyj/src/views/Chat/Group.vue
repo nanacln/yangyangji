@@ -100,11 +100,12 @@
 					// 	setLocalStorage('chat' + info.userId, JSON.stringify([info]))
 					// }
 				} else if (info.type === '5') {
-					if (info instanceof Array) {
-						state.chatArr = state.chatArr.concat(info)
-					} else {
-						state.chatArr.push(info.content)
-					}
+					if (info.data instanceof Array) {
+						state.chatArr = state.chatArr.concat(info.data)
+					} 
+					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
+				}else if(info.type==='3'){
+					state.chatArr.push(info)
 					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
 				}
 			})

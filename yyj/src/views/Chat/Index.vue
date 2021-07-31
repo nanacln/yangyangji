@@ -87,8 +87,8 @@
 				if (info.type === '9') {
 					return
 				} else if (info.type === '4') {
-					if (info instanceof Array) {
-						state.chatArr = state.chatArr.concat(info)
+					if (info.data instanceof Array) {
+						state.chatArr = state.chatArr.concat(info.data)
 						setLocalStorage(
 							'chat' + route.query.toUserId,
 							JSON.stringify(state.chatArr)
@@ -118,6 +118,8 @@
 						state.chatArr.push(info)
 						setLocalStorage('chat' + info.userId, JSON.stringify(state.chatArr))
 					}
+				}else if(info.type==='5'){
+					saveUnreadChatData('groups', info)
 				}
 			})
 			//清除当前聊天人未读消息记录

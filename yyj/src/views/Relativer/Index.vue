@@ -1,7 +1,7 @@
 <template>
 	<div class="qyt-box">
 		<router-link to="/chatgroup" class="qyt-item">
-			<van-badge :content="unreadObj.groupsNum || ''">
+			<van-badge :content="unreadObj.groups || ''">
 				<img class="qyt-userImg" src="~@/assets/images/group.png" />
 			</van-badge>
 			<div class="qyt-name">
@@ -52,7 +52,7 @@
 	import { defineComponent, reactive, ref, toRefs } from 'vue'
 	import { relativerInfo } from '@/types/common'
 	import { userList } from '@/api/common.api'
-	import { getLocalStorage, setLocalStorage } from '@/tool/tool'
+	import { getLocalStorage, setLocalStorage ,saveUnreadChatData} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
@@ -112,6 +112,12 @@
 					}
 					setLocalStorage('unreadObj', JSON.stringify(state.unreadObj))
 					return
+				}else if(info.type==='2'){
+					saveUnreadChatData(info.userId as string, info)
+					state.unreadObj=JSON.parse(getLocalStorage('unreadObj'))
+				}else if(info.type==='3'){
+					saveUnreadChatData('groups', info)
+					state.unreadObj=JSON.parse(getLocalStorage('unreadObj'))
 				}
 			})
 			return {
