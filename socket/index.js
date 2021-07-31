@@ -197,6 +197,26 @@ server.on('connection', function connection(ws, req) {
 			})
 		} else if (msg.type === '5') {
 			ws.name = msg.userId
+			let regStr=`(^(${msg.userId},)|(,${msg.userId})$)|(,${msg.userId},)|^(${msg.userId})$`
+			const reg=new RegExp(regStr)
+			groupList.where('groupIds',reg).exec((err,data)=>{
+				if(err){
+					return
+				}
+				if (data.length < 1) return
+				ws.send(JSON.stringify(data))
+				for(let i=0;i<data.length;i++){
+					let arr=data[i].groupIds.split(',')
+					let num=arr.indexOf(msg.userId)
+					arr.splice(num,1)
+					data[i].groupIds=arr.join(',')
+					groupList.updateOne({id:data[i].id},{$set:{groupIds:data[i].groupIds}},(err,data)=>{
+						if(err){
+							return
+						}
+					})
+				}
+			})
 		}
 		console.log('received: %s from %s', message, clientName)
 
