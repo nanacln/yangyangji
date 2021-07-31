@@ -50,34 +50,36 @@ server.on('connection', function connection(ws, req) {
 		const msg = JSON.parse(message)
 		if (msg.type === '1') {
 			ws.name = msg.userId
-			TalkList.find({ toUserId: Number(msg.userId),sendSuccess:false }).exec((err, data) => {
-				if (err) {
-					console.log(err)
-					return
-				}
-				if (data.length < 1) return
-				let unreadMsg = {}
-				for (let i = 0; i < data.length; i++) {
-					if (unreadMsg[data[i].userId]) {
-						unreadMsg[data[i].userId]++
-					} else {
-						unreadMsg[data[i].userId] = 1
+			TalkList.find({ toUserId: Number(msg.userId), sendSuccess: false }).exec(
+				(err, data) => {
+					if (err) {
+						console.log(err)
+						return
 					}
+					if (data.length < 1) return
+					let unreadMsg = {}
+					for (let i = 0; i < data.length; i++) {
+						if (unreadMsg[data[i].userId]) {
+							unreadMsg[data[i].userId]++
+						} else {
+							unreadMsg[data[i].userId] = 1
+						}
+					}
+					const info = {
+						unreadMsg,
+						type: '9', //返回未读消息情况
+					}
+					ws.send(JSON.stringify(info))
+
+					// })
 				}
-				const info = {
-					unreadMsg,
-					type: '9', //返回未读消息情况
-				}
-				ws.send(JSON.stringify(info))
-				
-				// })
-			})
+			)
 		} else if (msg.type === '2') {
 			const id = new Date().getTime() + ''
 			msg.id = id
 			msg.sendSuccess = false
-			var tl = new TalkList(msg)
 
+			var tl = new TalkList(msg)
 			tl.save(err => {
 				if (err) {
 					console.log('存储失败')
@@ -87,8 +89,10 @@ server.on('connection', function connection(ws, req) {
 				server.clients.forEach(function each(client) {
 					if (
 						client.readyState === WebSocket.OPEN &&
-						client.name === msg.toUserId
+						client.name == msg.toUserId
 					) {
+						console.log('4444', client.name)
+
 						client.send(message)
 						TalkList.updateOne(
 							{ id },
@@ -105,10 +109,11 @@ server.on('connection', function connection(ws, req) {
 				})
 			})
 		} else if (msg.type === '4') {
+			ws.name = msg.userId
 			TalkList.find({
 				toUserId: Number(msg.userId),
 				userId: Number(msg.toUserId),
-				sendSuccess:false
+				sendSuccess: false,
 			}).exec((err, data) => {
 				if (err) {
 					console.log(err)
@@ -116,13 +121,16 @@ server.on('connection', function connection(ws, req) {
 				}
 				if (data.length < 1) return
 				ws.send(JSON.stringify(data))
-				TalkList.updateMany({toUserId: Number(msg.userId),sendSuccess:false},{$set:{sendSuccess:true}},(err,data)=>{
-					if(err){
-						console.log(err);
-						return
+				TalkList.updateMany(
+					{ toUserId: Number(msg.userId), sendSuccess: false },
+					{ $set: { sendSuccess: true } },
+					(err, data) => {
+						if (err) {
+							console.log(err)
+							return
+						}
 					}
-				})
-				// })
+				)
 			})
 		}
 		console.log('received: %s from %s', message, clientName)

@@ -31,6 +31,7 @@
 <script lang="ts">
 	import { defineComponent, reactive, toRefs } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
+	import { msgtype } from '@/tool/type'
 	import {
 		getLocalStorage,
 		setLocalStorage,
@@ -38,7 +39,6 @@
 		saveUnreadChatData,
 	} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
-	import { msgtype } from '@/tool/type'
 	export default defineComponent({
 		setup() {
 			const router = useRouter()
@@ -58,10 +58,8 @@
 				chatArr: [],
 				unreadObj: {},
 			})
-			if (getLocalStorage('chat' + route.query.toUserId)) {
-				state.chatArr = JSON.parse(
-					getLocalStorage('chat' + route.query.toUserId)
-				)
+			if (getLocalStorage('chatgroups')) {
+				state.chatArr = JSON.parse(getLocalStorage('chatgroups'))
 			}
 			const onClickLeft = () => {
 				router.push('/relativer')
@@ -72,70 +70,55 @@
 			websocket.addEventListener('open', () => {
 				console.log('建立连接')
 				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
-
+				// 5 刚进入群聊（去获取未在线时，别人发的消息）
 				var msg: msgtype = {
-					type: '4',
-					content: '私聊啦',
+					type: '5',
+					content: '群聊上线啦',
 					userId: getLocalStorage('userId'),
-					toUserId: route.query.toUserId as string,
 				}
 
 				websocket.send(JSON.stringify(msg))
 			})
 			websocket.addEventListener('message', data => {
 				const info: msgtype = JSON.parse(data.data)
-				if (info.type === '9') {
-					return
-				} else if (info.type === '4') {
+				if (info.type === '2') {
+					saveUnreadChatData(info.userId as string, info)
+					// if (getLocalStorage('unreadObj')) {
+					// 	let obj = JSON.parse(getLocalStorage('unreadObj'))
+					// 	if ((info.userId as string) in obj) {
+					// 		obj[info.userId as string] += 1
+					// 	} else {
+					// 		obj[info.userId as string] = 1
+					// 	}
+					// 	setLocalStorage('unreadObj', JSON.stringify(obj))
+					// }
+					// if (getLocalStorage('chat' + info.userId)) {
+					// 	const arr = JSON.parse(getLocalStorage('chat' + info.userId))
+					// 	arr.push(info)
+					// 	setLocalStorage('chat' + info.userId, JSON.stringify(arr))
+					// } else {
+					// 	setLocalStorage('chat' + info.userId, JSON.stringify([info]))
+					// }
+				} else if (info.type === '5') {
 					if (info instanceof Array) {
 						state.chatArr = state.chatArr.concat(info)
-						setLocalStorage(
-							'chat' + route.query.toUserId,
-							JSON.stringify(state.chatArr)
-						)
-					}
-				} else if (info.type === '2') {
-					if (info.userId !== route.query.toUserId) {
-						saveUnreadChatData(info.userId as string, info)
-						// let obj: any = {}
-						// if (getLocalStorage('unreadObj')) {
-						// 	obj = JSON.parse(getLocalStorage('unreadObj'))
-						// }
-						// if ((info.userId as string) in obj) {
-						// 	obj[info.userId as string] += 1
-						// } else {
-						// 	obj[info.userId as string] = 1
-						// }
-						// setLocalStorage('unreadObj', JSON.stringify(obj))
-						// if (getLocalStorage('chat' + info.userId)) {
-						// 	const arr = JSON.parse(getLocalStorage('chat' + info.userId))
-						// 	arr.push(info)
-						// 	setLocalStorage('chat' + info.userId, JSON.stringify(arr))
-						// } else {
-						// 	setLocalStorage('chat' + info.userId, JSON.stringify([info]))
-						// }
 					} else {
-						state.chatArr.push(info)
-						setLocalStorage('chat' + info.userId, JSON.stringify(state.chatArr))
+						state.chatArr.push(info.content)
 					}
+					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
 				}
 			})
-			//清除当前聊天人未读消息记录
-			deleteUnreadItem(route.query.toUserId as string)
+			deleteUnreadItem('groupsNum')
 			const sendMsg = () => {
 				let obj = {
-					type: '2',
+					type: '3',
 					content: state.msg,
 					userId: getLocalStorage('userId') as string,
-					toUserId: route.query.toUserId as string,
 				}
 				websocket.send(JSON.stringify(obj))
 				state.msg = ''
 				state.chatArr.push(obj)
-				setLocalStorage(
-					'chat' + route.query.toUserId,
-					JSON.stringify(state.chatArr)
-				)
+				setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
 			}
 			return {
 				onClickLeft,

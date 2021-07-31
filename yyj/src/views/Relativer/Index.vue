@@ -44,7 +44,8 @@
 	import { defineComponent, reactive, ref, toRefs } from 'vue'
 	import { relativerInfo } from '@/types/common'
 	import { userList } from '@/api/common.api'
-	import { getLocalStorage } from '@/tool/tool'
+	import { getLocalStorage, setLocalStorage } from '@/tool/tool'
+	import getSocket from '@/tool/socket'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
 	export default defineComponent({
@@ -74,7 +75,8 @@
 				}
 			})
 			const active = ref(1)
-			const websocket = new WebSocket('ws://localhost:3000/')
+			const soketObj = getSocket()
+			const websocket = soketObj()
 			websocket.addEventListener('open', () => {
 				console.log('建立连接')
 				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
@@ -87,11 +89,20 @@
 
 				websocket.send(JSON.stringify(msg))
 			})
+			if (getLocalStorage('unreadObj')) {
+				const obj = JSON.parse(getLocalStorage('unreadObj')) || {}
+				state.unreadObj = obj
+			}
 			websocket.addEventListener('message', data => {
 				const info = JSON.parse(data.data)
 				if (info.type === '9') {
-					state.unreadObj = info.unreadMsg
-					console.log('未读消息', state.unreadObj)
+					if (getLocalStorage('unreadObj')) {
+						const obj = JSON.parse(getLocalStorage('unreadObj'))
+						state.unreadObj = Object.assign(obj, info.unreadMsg)
+					} else {
+						state.unreadObj = info.unreadMsg
+					}
+					setLocalStorage('unreadObj', JSON.stringify(state.unreadObj))
 					return
 				}
 			})

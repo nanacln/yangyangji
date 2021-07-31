@@ -1,4 +1,4 @@
-import {stringType} from '@/tool/type'
+import {stringType,msgtype} from '@/tool/type'
 export function dateFormat(fmt:string, date:Date):string {
   let ret;
   const opt:stringType = {
@@ -64,4 +64,30 @@ export function setLocalStorage(name:string,value:string):void{
 }
 export function getLocalStorage(name:string):string{
   return localStorage.getItem(name) as string
+}
+export function deleteUnreadItem(name:string):void{
+  if (getLocalStorage('unreadObj')) {
+    const obj = JSON.parse(getLocalStorage('unreadObj'))
+    delete obj[name]
+    setLocalStorage('unreadObj', JSON.stringify(obj))
+  }
+}
+export function saveUnreadChatData(key:string,info:msgtype):void{
+  let obj: any = {}
+  if (getLocalStorage('unreadObj')) {
+    obj = JSON.parse(getLocalStorage('unreadObj'))
+  }
+  if (key in obj) {
+    obj[key] += 1
+  } else {
+    obj[key] = 1
+  }
+  setLocalStorage('unreadObj', JSON.stringify(obj))
+  if (getLocalStorage('chat' + key)) {
+    const arr = JSON.parse(getLocalStorage('chat' + key))
+    arr.push(info)
+    setLocalStorage('chat' +key, JSON.stringify(arr))
+  } else {
+    setLocalStorage('chat' + key, JSON.stringify([info]))
+  }
 }

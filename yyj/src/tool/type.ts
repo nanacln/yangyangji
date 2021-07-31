@@ -40,3 +40,9 @@ export type resumeDetail={
   projectList:commonData[],
   [propName:string]:number|string|commonData[]
 }
+export type msgtype = {
+  type: string
+  content: any
+  userId?: string
+  toUserId?: string
+}
