@@ -23,7 +23,8 @@ import {
   Icon,
   Tabbar, TabbarItem,
   Tag,
-	CellGroup
+	CellGroup,
+  Badge
 } from 'vant'
 
 // https://vant-contrib.gitee.io/vant/v3/#/zh-CN
@@ -51,7 +52,8 @@ const plugins = [
   Icon,
   Tabbar, TabbarItem,
   Tag,
-	CellGroup
+	CellGroup,
+  Badge
 ]
 export default{
   install: function(vm: App):void {
