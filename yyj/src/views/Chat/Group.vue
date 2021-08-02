@@ -65,12 +65,10 @@
 				router.push('/relativer')
 			}
 
-			const soketObj = getSocket()
-			const websocket = soketObj()
-			websocket.addEventListener('open', () => {
-				console.log('建立连接')
-				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
-				// 5 刚进入群聊（去获取未在线时，别人发的消息）
+			// const soketObj = getSocket()
+			// const websocket = soketObj()
+			const websocket = getSocket()
+			setTimeout(() => {
 				var msg: msgtype = {
 					type: '5',
 					content: '群聊上线啦',
@@ -78,38 +76,34 @@
 				}
 
 				websocket.send(JSON.stringify(msg))
-			})
+			}, 100)
+			// websocket.addEventListener('open', () => {
+			// 	console.log('建立连接')
+			// 	// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
+			// 	// 5 刚进入群聊（去获取未在线时，别人发的消息）
+			// 	var msg: msgtype = {
+			// 		type: '5',
+			// 		content: '群聊上线啦',
+			// 		userId: getLocalStorage('userId'),
+			// 	}
+
+			// 	websocket.send(JSON.stringify(msg))
+			// })
 			websocket.addEventListener('message', data => {
 				const info: msgtype = JSON.parse(data.data)
 				if (info.type === '2') {
 					saveUnreadChatData(info.userId as string, info)
-					// if (getLocalStorage('unreadObj')) {
-					// 	let obj = JSON.parse(getLocalStorage('unreadObj'))
-					// 	if ((info.userId as string) in obj) {
-					// 		obj[info.userId as string] += 1
-					// 	} else {
-					// 		obj[info.userId as string] = 1
-					// 	}
-					// 	setLocalStorage('unreadObj', JSON.stringify(obj))
-					// }
-					// if (getLocalStorage('chat' + info.userId)) {
-					// 	const arr = JSON.parse(getLocalStorage('chat' + info.userId))
-					// 	arr.push(info)
-					// 	setLocalStorage('chat' + info.userId, JSON.stringify(arr))
-					// } else {
-					// 	setLocalStorage('chat' + info.userId, JSON.stringify([info]))
-					// }
 				} else if (info.type === '5') {
 					if (info.data instanceof Array) {
 						state.chatArr = state.chatArr.concat(info.data)
-					} 
+					}
 					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
-				}else if(info.type==='3'){
+				} else if (info.type === '3') {
 					state.chatArr.push(info)
 					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
 				}
 			})
-			deleteUnreadItem('groupsNum')
+			deleteUnreadItem('groups')
 			const sendMsg = () => {
 				let obj = {
 					type: '3',

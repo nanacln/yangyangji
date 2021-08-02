@@ -16,6 +16,7 @@
 				<img class="chat-img" src="~@/assets/images/person.png" />
 				<div class="chat-content">{{ item.content }}</div>
 			</li>
+			<li class="chat-end"></li>
 		</ul>
 		<div class="chat-input">
 			<van-field v-model="msg" center clearable placeholder="请输入">
@@ -29,7 +30,7 @@
 	</div>
 </template>
 <script lang="ts">
-	import { defineComponent, reactive, toRefs } from 'vue'
+	import { defineComponent, reactive, toRefs, nextTick, watch } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
 	import {
 		getLocalStorage,
@@ -66,13 +67,10 @@
 			const onClickLeft = () => {
 				router.push('/relativer')
 			}
-
-			const soketObj = getSocket()
-			const websocket = soketObj()
-			websocket.addEventListener('open', () => {
-				console.log('建立连接')
-				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
-
+			const websocket = getSocket()
+			// const soketObj = getSocket()
+			// const websocket = soketObj()
+			setTimeout(() => {
 				var msg: msgtype = {
 					type: '4',
 					content: '私聊啦',
@@ -81,8 +79,31 @@
 				}
 
 				websocket.send(JSON.stringify(msg))
-			})
-			websocket.addEventListener('message', data => {
+			}, 100)
+			watch(
+				() => state.chatArr,
+				async val => {
+					await nextTick()
+					;(document.querySelector('.chat-end') as HTMLElement).scrollIntoView()
+				},
+				{
+					deep: true,
+				}
+			)
+			// websocket.addEventListener('open', () => {
+			// 	console.log('建立连接')
+			// 	// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
+
+			// 	var msg: msgtype = {
+			// 		type: '4',
+			// 		content: '私聊啦',
+			// 		userId: getLocalStorage('userId'),
+			// 		toUserId: route.query.toUserId as string,
+			// 	}
+
+			// 	websocket.send(JSON.stringify(msg))
+			// })
+			websocket.addEventListener('message', async data => {
 				const info: msgtype = JSON.parse(data.data)
 				if (info.type === '9') {
 					return
@@ -97,28 +118,11 @@
 				} else if (info.type === '2') {
 					if (info.userId !== route.query.toUserId) {
 						saveUnreadChatData(info.userId as string, info)
-						// let obj: any = {}
-						// if (getLocalStorage('unreadObj')) {
-						// 	obj = JSON.parse(getLocalStorage('unreadObj'))
-						// }
-						// if ((info.userId as string) in obj) {
-						// 	obj[info.userId as string] += 1
-						// } else {
-						// 	obj[info.userId as string] = 1
-						// }
-						// setLocalStorage('unreadObj', JSON.stringify(obj))
-						// if (getLocalStorage('chat' + info.userId)) {
-						// 	const arr = JSON.parse(getLocalStorage('chat' + info.userId))
-						// 	arr.push(info)
-						// 	setLocalStorage('chat' + info.userId, JSON.stringify(arr))
-						// } else {
-						// 	setLocalStorage('chat' + info.userId, JSON.stringify([info]))
-						// }
 					} else {
 						state.chatArr.push(info)
 						setLocalStorage('chat' + info.userId, JSON.stringify(state.chatArr))
 					}
-				}else if(info.type==='5'){
+				} else if (info.type === '5') {
 					saveUnreadChatData('groups', info)
 				}
 			})

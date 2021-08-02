@@ -52,7 +52,11 @@
 	import { defineComponent, reactive, ref, toRefs } from 'vue'
 	import { relativerInfo } from '@/types/common'
 	import { userList } from '@/api/common.api'
-	import { getLocalStorage, setLocalStorage ,saveUnreadChatData} from '@/tool/tool'
+	import {
+		getLocalStorage,
+		setLocalStorage,
+		saveUnreadChatData,
+	} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
@@ -83,12 +87,10 @@
 				}
 			})
 			const active = ref(1)
-			const soketObj = getSocket()
-			const websocket = soketObj()
-			websocket.addEventListener('open', () => {
-				console.log('建立连接')
-				// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
-
+			// const soketObj = getSocket()
+			// const websocket = soketObj()
+			const websocket = getSocket()
+			setTimeout(() => {
 				var msg: msgtype = {
 					type: '1',
 					content: '上线啦',
@@ -96,7 +98,19 @@
 				}
 
 				websocket.send(JSON.stringify(msg))
-			})
+			}, 100)
+			// websocket.addEventListener('open', () => {
+			// 	console.log('建立连接')
+			// 	// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
+
+			// 	var msg: msgtype = {
+			// 		type: '1',
+			// 		content: '上线啦',
+			// 		userId: getLocalStorage('userId'),
+			// 	}
+
+			// 	websocket.send(JSON.stringify(msg))
+			// })
 			if (getLocalStorage('unreadObj')) {
 				const obj = JSON.parse(getLocalStorage('unreadObj')) || {}
 				state.unreadObj = obj
@@ -112,12 +126,12 @@
 					}
 					setLocalStorage('unreadObj', JSON.stringify(state.unreadObj))
 					return
-				}else if(info.type==='2'){
+				} else if (info.type === '2') {
 					saveUnreadChatData(info.userId as string, info)
-					state.unreadObj=JSON.parse(getLocalStorage('unreadObj'))
-				}else if(info.type==='3'){
+					state.unreadObj = JSON.parse(getLocalStorage('unreadObj'))
+				} else if (info.type === '3') {
 					saveUnreadChatData('groups', info)
-					state.unreadObj=JSON.parse(getLocalStorage('unreadObj'))
+					state.unreadObj = JSON.parse(getLocalStorage('unreadObj'))
 				}
 			})
 			return {
