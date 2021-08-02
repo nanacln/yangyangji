@@ -39,31 +39,16 @@
 		saveUnreadChatData,
 	} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
+	import chathook from '@/tool/hookchat'
 	export default defineComponent({
 		setup() {
-			const router = useRouter()
-			const route = useRoute()
-			console.log(route.query)
-			type stateModel = {
-				msg: string
-				name: string
-				userId: string
-				chatArr: msgtype[]
-				unreadObj: any
-			}
-			const state = reactive<stateModel>({
-				msg: '',
-				name: route.query.name as string,
-				userId: getLocalStorage('userId') as string,
-				chatArr: [],
-				unreadObj: {},
-			})
+			const {onClickLeft,state}=chathook()
+
+
 			if (getLocalStorage('chatgroups')) {
 				state.chatArr = JSON.parse(getLocalStorage('chatgroups'))
 			}
-			const onClickLeft = () => {
-				router.push('/relativer')
-			}
+
 
 			// const soketObj = getSocket()
 			// const websocket = soketObj()

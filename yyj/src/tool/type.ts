@@ -47,3 +47,10 @@ export type msgtype = {
   toUserId?: string,
   data?:msgtype[]
 }
+export type stateModel = {
+  msg: string
+  name: string
+  userId: string
+  chatArr: msgtype[]
+  unreadObj: any
+}

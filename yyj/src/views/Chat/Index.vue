@@ -31,7 +31,6 @@
 </template>
 <script lang="ts">
 	import { defineComponent, reactive, toRefs, nextTick, watch } from 'vue'
-	import { useRouter, useRoute } from 'vue-router'
 	import {
 		getLocalStorage,
 		setLocalStorage,
@@ -40,33 +39,18 @@
 	} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
 	import { msgtype } from '@/tool/type'
+	import chathook from '@/tool/hookchat'
+	import {  useRoute } from 'vue-router'
 	export default defineComponent({
 		setup() {
-			const router = useRouter()
-			const route = useRoute()
-			console.log(route.query)
-			type stateModel = {
-				msg: string
-				name: string
-				userId: string
-				chatArr: msgtype[]
-				unreadObj: any
-			}
-			const state = reactive<stateModel>({
-				msg: '',
-				name: route.query.name as string,
-				userId: getLocalStorage('userId') as string,
-				chatArr: [],
-				unreadObj: {},
-			})
+const {onClickLeft,state}=chathook()
+  const route = useRoute()
 			if (getLocalStorage('chat' + route.query.toUserId)) {
 				state.chatArr = JSON.parse(
 					getLocalStorage('chat' + route.query.toUserId)
 				)
 			}
-			const onClickLeft = () => {
-				router.push('/relativer')
-			}
+
 			const websocket = getSocket()
 			// const soketObj = getSocket()
 			// const websocket = soketObj()
@@ -80,16 +64,16 @@
 
 				websocket.send(JSON.stringify(msg))
 			}, 100)
-			watch(
-				() => state.chatArr,
-				async val => {
-					await nextTick()
-					;(document.querySelector('.chat-end') as HTMLElement).scrollIntoView()
-				},
-				{
-					deep: true,
-				}
-			)
+			// watch(
+			// 	() => state.chatArr,
+			// 	async val => {
+			// 		await nextTick()
+			// 		;(document.querySelector('.chat-end') as HTMLElement).scrollIntoView()
+			// 	},
+			// 	{
+			// 		deep: true,
+			// 	}
+			// )
 			// websocket.addEventListener('open', () => {
 			// 	console.log('建立连接')
 			// 	// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
