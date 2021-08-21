@@ -22,7 +22,7 @@
 						}}</van-tag
 						>说:
 					</div>
-					<div class="yy-time">一天前</div>
+					<div class="yy-time">{{$filters.dealTime(item.createTime)}}</div>
 				</div>
 
 				<div class="yy-active">{{ item.content }}</div>
