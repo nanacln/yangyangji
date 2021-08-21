@@ -1,6 +1,8 @@
 <template>
 	<div class="qyt-box">
-		<router-link to="/chatgroup" class="qyt-item">
+		
+		<van-swipe-cell>
+			<router-link to="/chatgroup" class="qyt-item">
 			<van-badge :content="unreadObj.groups || ''">
 				<img class="qyt-userImg" src="~@/assets/images/group.png" />
 			</van-badge>
@@ -8,9 +10,15 @@
 				广播室
 			</div>
 		</router-link>
+			<template #right>
+				<van-button class="mr2" square type="danger" @click="clearChat('groups')" text="删除广播内容" />
+			</template>
+		</van-swipe-cell>
+  
 		<div v-for="item in list" :key="item.userId">
+			<van-swipe-cell v-if="item.userId != userId">
 			<router-link
-				v-if="item.userId != userId"
+				
 				:to="
 					`/chatsingle?toUserId=${item.userId}&name=${
 						item.nickName
@@ -26,6 +34,11 @@
 					{{ item.nickName }}
 				</div>
 			</router-link>
+			<template #right>
+				<van-button class="mr2" square type="danger" @click="clearChat(item.userId)" text="删除聊天记录" />
+			</template>
+			</van-swipe-cell>
+			
 			<div
 				v-if="item.userId == userId"
 				:to="
@@ -99,21 +112,16 @@
 
 				websocket.send(JSON.stringify(msg))
 			}, 100)
-			// websocket.addEventListener('open', () => {
-			// 	console.log('建立连接')
-			// 	// type  1上线  2私聊  3 群聊  0服务器存储消息失败 4刚进入私聊（去获取未在线时，别人发的消息）
-
-			// 	var msg: msgtype = {
-			// 		type: '1',
-			// 		content: '上线啦',
-			// 		userId: getLocalStorage('userId'),
-			// 	}
-
-			// 	websocket.send(JSON.stringify(msg))
-			// })
+			
 			if (getLocalStorage('unreadObj')) {
 				const obj = JSON.parse(getLocalStorage('unreadObj')) || {}
 				state.unreadObj = obj
+			}
+			const clearChat=(id:string)=>{
+				setLocalStorage(
+					'chat' + id,
+					JSON.stringify([])
+				)
 			}
 			websocket.addEventListener('message', data => {
 				const info = JSON.parse(data.data)
@@ -137,11 +145,15 @@
 			return {
 				...toRefs(state),
 				active,
+				clearChat
 			}
 		},
 	})
 </script>
 <style lang="scss" scoped>
+.mr2{
+	margin-left: 2px;
+}
 	.qyt {
 		&-userImg {
 			width: 100px;

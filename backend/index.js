@@ -24,7 +24,8 @@ const io = require('socket.io')(http)
 //引入mongodb
 // const { MongoClient } = require('mongodb') //定义数据库连接的地址
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/yangyangji', {
+mongoose.connect('mongodb://106.14.172.134:27017/yangyangji', {
+// mongoose.connect('mongodb://nana:123456@127.0.0.1:30000/yangyangji', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 })
@@ -57,7 +58,7 @@ app.use(bodyParser.json())
 // const url = 'mongodb://127.0.0.1:27017'
 //定义要操作的数据库
 // const dbName = 'yangyangji'
-app.use('/static', express.static('static'))
+app.use('', express.static('static'))
 //实例化Mongoclient传入数据库连接地址
 // const client = new MongoClient(url, {
 // 	useNewUrlParser: true,
@@ -180,14 +181,14 @@ app.post('/api/upload', (req, res) => {
 	form.parse(req, function (error, fields, files) {
 		console.log(files, files.file)
 		let name =
-			'static/imgs/' + Math.floor(Math.random() * 100) + files.file.name
-		fs.writeFileSync(name, fs.readFileSync(files.file.path))
+			'/imgs/' + Math.floor(Math.random() * 100) + files.file.name
+		fs.writeFileSync('static'+name, fs.readFileSync(files.file.path))
 		// let name = 'static/imgs/'
-		let prefix = 'http://localhost:8666/'
+		// let prefix = 'http://localhost:8666/'
 		res.send({
 			code: 200,
 			msg: '请求成功',
-			data: prefix + name,
+			data:  name,
 		})
 	})
 	// var writeStream = fs.createWriteStream('/static/imgs/11.jpg')
@@ -391,18 +392,18 @@ app.post('/api/updateUser', (req, res) => {
 	// })
 })
 app.post('/api/uploadUserAvatar', (req, res) => {
-	const path = 'static/imgs/' + Date.now() + '.png'
+	const path = '/imgs/' + Date.now() + '.png'
 	const base64 = req.body.file.replace(/^data:image\/\w+;base64,/, '') //去掉图片base64码前面部分data:image/png;base64
 	const dataBuffer = new Buffer(base64, 'base64') //把base64码转成buffer对象，
-	let prefix = 'http://localhost:8666/'
-	fs.writeFile(path, dataBuffer, function (err) {
+	// let prefix = 'http://localhost:8666/'
+	fs.writeFile('static'+path, dataBuffer, function (err) {
 		//用fs写入文件
 		if (err) {
 			console.log(err)
 		} else {
 			UserList.updateOne(
 				{ userId: Number(req.body.userId) },
-				{ $set: { avatar: prefix + path } },
+				{ $set: { avatar:  path } },
 				err => {
 					if (err) {
 						return
@@ -411,7 +412,7 @@ app.post('/api/uploadUserAvatar', (req, res) => {
 					res.send({
 						code: 200,
 						msg: '请求成功',
-						data: prefix + path,
+						data:  path,
 					})
 				}
 			)

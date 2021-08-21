@@ -2,7 +2,8 @@ function getSocket(){
   let socket:null|WebSocket=null
   return function(){
     if(!socket){
-      socket=new WebSocket('ws://localhost:3000/')
+      // socket=new WebSocket('ws://localhost:3000/')
+      socket=new WebSocket('ws://106.14.172.134:3000/')
     }
     socket.addEventListener('open', () => {
       console.log('建立连接')

@@ -30,7 +30,7 @@
 	</div>
 </template>
 <script lang="ts">
-	import { defineComponent, reactive, toRefs, nextTick, watch } from 'vue'
+	import { defineComponent, reactive, toRefs, nextTick, watch,  onBeforeUnmount } from 'vue'
 	import {
 		getLocalStorage,
 		setLocalStorage,
@@ -110,8 +110,12 @@ const {onClickLeft,state}=chathook()
 					saveUnreadChatData('groups', info)
 				}
 			})
+			let id=route.query.toUserId as string
 			//清除当前聊天人未读消息记录
-			deleteUnreadItem(route.query.toUserId as string)
+			onBeforeUnmount(()=>{
+				deleteUnreadItem(id)
+			})
+			
 			const sendMsg = () => {
 				let obj = {
 					type: '2',

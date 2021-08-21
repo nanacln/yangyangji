@@ -16,6 +16,7 @@
 				<img class="chat-img" src="~@/assets/images/person.png" />
 				<div class="chat-content">{{ item.content }}</div>
 			</li>
+			<li class="chat-end"></li>
 		</ul>
 		<div class="chat-input">
 			<van-field v-model="msg" center clearable placeholder="请输入">
@@ -29,7 +30,7 @@
 	</div>
 </template>
 <script lang="ts">
-	import { defineComponent, reactive, toRefs } from 'vue'
+	import { defineComponent, onBeforeUnmount, reactive, toRefs } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
 	import { msgtype } from '@/tool/type'
 	import {
@@ -88,7 +89,10 @@
 					setLocalStorage('chatgroups', JSON.stringify(state.chatArr))
 				}
 			})
-			deleteUnreadItem('groups')
+			onBeforeUnmount(()=>{
+				deleteUnreadItem('groups')
+			})
+			
 			const sendMsg = () => {
 				let obj = {
 					type: '3',

@@ -24,7 +24,8 @@ import {
   Tabbar, TabbarItem,
   Tag,
 	CellGroup,
-  Badge
+  Badge,
+	SwipeCell
 } from 'vant'
 
 // https://vant-contrib.gitee.io/vant/v3/#/zh-CN
@@ -53,7 +54,8 @@ const plugins = [
   Tabbar, TabbarItem,
   Tag,
 	CellGroup,
-  Badge
+  Badge,
+	SwipeCell
 ]
 export default{
   install: function(vm: App):void {

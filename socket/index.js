@@ -13,7 +13,9 @@
 // }).listen(3000)
 
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/yangyangji', {
+mongodb://106.14.172.134:27017/yangyangji
+mongoose.connect('mongodb://106.14.172.134:27017/yangyangji', {
+	// mongoose.connect('mongodb://127.0.0.1:27017/yangyangji', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 })
