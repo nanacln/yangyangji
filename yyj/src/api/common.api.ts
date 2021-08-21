@@ -8,7 +8,8 @@ import {
   userInfo,
   relativerInfo,
   BaseResponse,
-  updateUserInfo
+  updateUserInfo,
+  commentsModel
 } from '@/types/common'
 
 
@@ -18,6 +19,10 @@ export function growuprecordList(params:paramList):Promise<BaseResponse<growupRe
 export function growuprecordSave(params:recoredSaveModel):Promise<BaseResponse<string>>{
   return httpPost('/api/record/add',params)
 }
+export function updateComments(params:commentsModel):Promise<BaseResponse<string>>{
+  return httpPost('/api/record/comments',params)
+}
+
 export function imgUpload(params:FormData):Promise<BaseResponse<string>>{
   return httpPost('/api/upload',params)
 }

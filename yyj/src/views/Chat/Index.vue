@@ -115,7 +115,10 @@ const {onClickLeft,state}=chathook()
 			onBeforeUnmount(()=>{
 				deleteUnreadItem(id)
 			})
-			
+			function scroll(){
+				(document.querySelector('.chat-end') as HTMLElement).scrollIntoView()
+			}
+			window.onresize = scroll
 			const sendMsg = () => {
 				let obj = {
 					type: '2',

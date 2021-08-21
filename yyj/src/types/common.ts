@@ -66,3 +66,9 @@ export type updateUserInfo={
   userId:string,
   nickName:string,
 }
+export type commentsModel={
+  userId:string,
+  id:number,
+  comments:string,
+  nickName:string
+}

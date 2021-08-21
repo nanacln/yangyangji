@@ -54,3 +54,8 @@ export type stateModel = {
   chatArr: msgtype[]
   unreadObj: any
 }
+export interface commentsModel{
+  userId:string,
+  id:Number,
+  comments:string
+}
