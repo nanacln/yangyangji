@@ -4,6 +4,7 @@ import {  reactive } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
   import {
 		getLocalStorage,
+    setLocalStorage
 	} from '@/tool/tool'
 function chatBook(){
   const router = useRouter()
@@ -14,7 +15,20 @@ function chatBook(){
     userId: getLocalStorage('userId') as string,
     chatArr: [],
     unreadObj: {},
+    avatarObj:{},
+    avatar:''
   })
+  const avatarStr=getLocalStorage('avatarObj')
+			const avatarObj=avatarStr?JSON.parse(avatarStr):{}
+			avatarObj[getLocalStorage('userId')]=getLocalStorage('avatar')||''
+			if(route.query.avatar){
+				avatarObj[route.query.toUserId as string]=route.query.avatar
+			}
+			setLocalStorage('avatarObj',JSON.stringify( avatarObj))
+  if(getLocalStorage('avatarObj')){
+    state.avatarObj=JSON.parse(getLocalStorage('avatarObj'))
+  }
+  
   const onClickLeft = () => {
     router.push('/relativer')
   }

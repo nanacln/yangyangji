@@ -13,7 +13,7 @@
 			finished-text="没有更多了"
 			@load="onLoad"
 		>
-			<div class="yy-list" v-for="item in state.list" :key="item.id">
+			<div class="yy-list" v-for="(item,index) in state.list" :key="item.id">
 				<div class="yy-head">
 					<div class="yy-rel-name">
 						<span>{{ item.nickName }}</span
@@ -38,7 +38,7 @@
 					/>
 				</van-row>
 				<div class="comments-bar">
-					<van-icon class="comments-icon" name="chat-o" @click="toComment(item.id)" />
+					<van-icon class="comments-icon" name="chat-o" @click="toComment(item.id,index)" />
 				</div>
 				<div class="comments-box" v-if="item.comments">
 					<div class="comments-item" v-for="v in JSON.parse(item.comments)" :key="v.comments+v.userId">
@@ -48,6 +48,7 @@
 				</div>
 			</div>
 		</van-list>
+		<div class="end-tips"></div>
 		<van-tabbar v-model="active" :route="true">
 			<van-tabbar-item to="/home" icon="home-o">首页</van-tabbar-item>
 			<!-- <van-tabbar-item icon="search">标签</van-tabbar-item> -->
@@ -65,7 +66,7 @@
 				</template>
 			</van-field>
 		</div>
-			<div class="footer-end"></div>
+		<div class="footer-end"></div>
 		</div>
 	</div>
 </template>
@@ -74,8 +75,10 @@
 	import { defineComponent, reactive, ref,nextTick } from 'vue'
 	import { growuprecordList ,updateComments} from '@/api/common.api'
 	import { growupRecordArr} from '@/types/common'
+	import { useRouter } from 'vue-router'
 	import {
 		getLocalStorage,
+		setLocalStorage
 	} from '@/tool/tool'
 	import { ImagePreview } from 'vant'
 	// import io from 'socket.io-client'
@@ -97,6 +100,7 @@
 				commentId:number,
 				commentFlag:boolean
 			}
+			const router = useRouter()
 			const state = reactive<stateModel>({
 				list: [],
 				loading: false,
@@ -109,6 +113,7 @@
 				commentId:0,
 				commentFlag:false
 			})
+			let curComment=0
 			// const websocket =new WebSocket('ws://localhost:3000/')
 			// websocket.addEventListener('open',()=>{
 			// 	console.log('建立连接');
@@ -170,7 +175,14 @@
 				}
 			}
 			
-			const toComment=async (id:number)=>{
+			const toComment=async (id:number,index:number)=>{
+				
+				if(!(getLocalStorage('nickName'))){
+					setLocalStorage("ucm_curUrl", '/home');
+					router.push('/login')
+					return
+				}
+				curComment=index
 				state.commentId=id
 				showComment(true)
 				await nextTick()
@@ -181,7 +193,6 @@
 			}
 			window.onresize = scroll
 			const sendMsg=()=>{
-				console.log(111);
 				let param={
 					userId:getLocalStorage('userId') as string,
 					id:state.commentId,
@@ -190,7 +201,14 @@
 				}
 				updateComments(param)
 				.then(res=>{
+
 					if(res.code===200){
+						let arr=[]
+						if(state.list[curComment].comments){
+							arr=JSON.parse(state.list[curComment].comments as string)
+						}
+						arr.push({comments:state.comments,nickName:getLocalStorage('nickName') as string,userId:getLocalStorage('userId') as string})
+						state.list[curComment].comments=JSON.stringify(arr)
 						state.comments=''
 						state.commentFlag=false
 					}
@@ -238,6 +256,9 @@
 	&-end{
 		height: 1px;
 	}
+}
+.end-tips{
+	height: 100px;
 }
 .comments{
 	&-bar{

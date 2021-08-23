@@ -13,7 +13,8 @@
 				v-for="(item, index) in chatArr"
 				:key="index"
 			>
-				<img class="chat-img" src="~@/assets/images/person.png" />
+				<img class="chat-img" v-if="avatarObj[item.userId]" :src="avatarObj[item.userId]" />
+				<img class="chat-img" v-else src="~@/assets/images/person.png" />
 				<div class="chat-content">{{ item.content }}</div>
 			</li>
 			<li class="chat-end"></li>
@@ -30,7 +31,7 @@
 	</div>
 </template>
 <script lang="ts">
-	import { defineComponent, reactive, toRefs, nextTick, watch,  onBeforeUnmount } from 'vue'
+	import { defineComponent,  toRefs,   onBeforeUnmount } from 'vue'
 	import {
 		getLocalStorage,
 		setLocalStorage,
@@ -43,14 +44,18 @@
 	import {  useRoute } from 'vue-router'
 	export default defineComponent({
 		setup() {
-const {onClickLeft,state}=chathook()
-  const route = useRoute()
+			const route = useRoute()
+			
+			const {onClickLeft,state}=chathook()
+  
 			if (getLocalStorage('chat' + route.query.toUserId)) {
 				state.chatArr = JSON.parse(
 					getLocalStorage('chat' + route.query.toUserId)
 				)
 			}
-
+			
+			
+			
 			const websocket = getSocket()
 			// const soketObj = getSocket()
 			// const websocket = soketObj()

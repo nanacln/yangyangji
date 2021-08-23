@@ -79,6 +79,11 @@
 					console.log(res)
 					if (res.code === 200) {
 						Toast.success('添加成功')
+						setTimeout(() => {
+							
+							router.push('/home')
+						}, 2000)
+						
 					}
 				})
 				console.log('sss')

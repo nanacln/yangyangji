@@ -16,7 +16,8 @@ export type paramList={
 export type growupRecordArr={
   role:string
   content:string
-  imgs:string
+  imgs:string,
+  comments?:string
 }[]
 export interface pageList<T>{
   list:T
@@ -28,7 +29,8 @@ export interface pageList<T>{
 export type recoredSaveModel={
   role:string,
   content:string,
-  imgs:string
+  imgs:string,
+  
 }
 
 export type growupRecordListModel=pageList<growupRecordArr>

@@ -52,7 +52,9 @@ export type stateModel = {
   name: string
   userId: string
   chatArr: msgtype[]
-  unreadObj: any
+  unreadObj: any,
+  avatarObj:any,
+  avatar:string
 }
 export interface commentsModel{
   userId:string,
