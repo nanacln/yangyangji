@@ -27,6 +27,9 @@ app.config.globalProperties.$filters = {
     }else{
       return Math.floor(v/(3600*24*30*12))+'年前'
     }
-  }
+  },
+  
 }
+
+app.config.globalProperties.imagePrefix='http://wenyangnana.com'
 app.mount('#app')

@@ -1,7 +1,6 @@
 <template>
   <div class="mine-box">
-		
-    <img v-if="avatar" :src="avatar" alt="" class="mine-img">
+    <img v-if="avatar" :src="imagePrefix+avatar" alt="" class="mine-img">
     <img v-else src="~@/assets/images/person.png" alt="" class="mine-img">
 		<van-uploader :after-read="afterRead" class="mine-upload" />
     <van-cell-group inset>

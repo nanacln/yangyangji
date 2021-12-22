@@ -33,7 +33,7 @@
 						width="30%"
 						height="80px"
 						fit="cover"
-						:src="item2"
+						:src="imagePrefix+item2"
 						@click="PreviewImage(item.imgs)"
 					/>
 				</van-row>

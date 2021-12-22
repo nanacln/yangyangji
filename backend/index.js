@@ -57,8 +57,10 @@ const userSchema = mongoose.Schema({
 const UserList = mongoose.model('UserList', userSchema, 'UserList')
 
 const bodyParser = require('body-parser')
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+// app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json())
+app.use(bodyParser.json({limit: '10mb'})); // for parsing application/json
+app.use(bodyParser.urlencoded({limit: '10mb', extended: true })); // for parsing application/x-www-form-urlencoded
 // const url = 'mongodb://127.0.0.1:27017'
 //定义要操作的数据库
 // const dbName = 'yangyangji'

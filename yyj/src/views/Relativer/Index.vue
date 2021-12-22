@@ -27,7 +27,7 @@
 				class="qyt-item"
 			>
 				<van-badge :content="unreadObj[item.userId] || ''">
-					<img class="qyt-userImg" v-if="item.avatar" :src="item.avatar" />
+					<img class="qyt-userImg" v-if="item.avatar" :src="imagePrefix+item.avatar" />
 					<img class="qyt-userImg" v-else src="~@/assets/images/person.png" />
 				</van-badge>
 				<div class="qyt-name">
@@ -48,7 +48,7 @@
 				"
 				class="qyt-item isSelf"
 			>
-				<img class="qyt-userImg" v-if="item.avatar" :src="item.avatar" />
+				<img class="qyt-userImg" v-if="item.avatar" :src="imagePrefix+item.avatar" />
 				<img class="qyt-userImg" v-else src="~@/assets/images/person.png" />
 				<div class="qyt-name">{{ item.nickName }}</div>
 			</div>
