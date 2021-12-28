@@ -54,16 +54,16 @@
 			const afterRead = file => {
 				// 此时可以自行将文件上传至服务器
 				console.log(file)
-				let formData = new FormData()
-				// formData.append('file', file)
-				formData.append('file', file.file)
+				minifyImage(file.file)
+				// let formData = new FormData()
+				// formData.append('file', file.file)
 
-				imgUpload(formData).then(res => {
-					if (res.code === 200) {
-						state.imgs.push(res.data)
-						Toast.success('图片上传成功')
-					}
-				})
+				// imgUpload(formData).then(res => {
+				// 	if (res.code === 200) {
+				// 		state.imgs.push(res.data)
+				// 		Toast.success('图片上传成功')
+				// 	}
+				// })
 			}
 			const onClickLeft = () => {
 				router.push('/home')
@@ -88,7 +88,86 @@
 				})
 				console.log('sss')
 			}
+			const minifyImage=(file)=>{
+				const formData = new FormData()
 
+				function photoCompress (file, w, objDiv) {
+					const ready = new FileReader()
+					/* 开始读取指定的Blob对象或File对象中的内容. 当读取操作完成时,readyState属性的值会成为DONE,如果设置了onloadend事件处理程序,则调用之.同时,result属性中将包含一个data: URL格式的字符串以表示所读取文件的内容. */
+					ready.readAsDataURL(file)
+					ready.onload = function () {
+						let re = ready.result
+						canvasDataURL(re, w, objDiv)
+					}
+				}
+				function canvasDataURL (path, obj, callback) {
+					var img = new Image()
+					img.src = path
+					img.onload = function () {
+						var that = img
+						// 默认按比例压缩
+						var w = that.width
+						var h = that.height
+						var scale = w / h
+						w = obj.width || w
+						h = obj.height || (w / scale)
+						var quality = 0.7 // 默认图片质量为0.7
+						// 生成canvas
+						var canvas = document.createElement('canvas')
+						var ctx = canvas.getContext('2d')
+						// 创建属性节点
+						var anw = document.createAttribute('width')
+						anw.nodeValue = w
+						var anh = document.createAttribute('height')
+						anh.nodeValue = h
+						canvas.setAttributeNode(anw)
+						canvas.setAttributeNode(anh)
+						ctx.drawImage(that, 0, 0, w, h)
+						// 图像质量
+						if (obj.quality && obj.quality <= 1 && obj.quality > 0) {
+							quality = obj.quality
+						}
+						// quality值越小，所绘制出的图像越模糊
+						var base64 = canvas.toDataURL('image/jpeg', quality)
+						// 回调函数返回base64的值
+						callback(base64)
+					}
+				}
+				function convertBase64UrlToBlob (urlData) {
+					var arr = urlData.split(',')
+					let mime = arr[0].match(/:(.*?);/)[1]
+
+					let bstr = atob(arr[1])
+					let n = bstr.length
+					let u8arr = new Uint8Array(n)
+					while (n--) {
+						u8arr[n] = bstr.charCodeAt(n)
+					}
+					return new Blob([u8arr], {type: mime})
+				}
+				if (file.size > 1024 * 1024) {
+					photoCompress(file, {quality: 0.2}, (base64Codes) => {
+						var bl = convertBase64UrlToBlob(base64Codes)
+						formData.append('file', bl, 'file_' + Date.parse(new Date()) + '.jpg') // 文件对象
+						imgUpload(formData).then(res => {
+							if (res.code === 200) {
+								state.imgs.push(res.data)
+								Toast.success('图片上传成功')
+							}
+						})
+					})
+				} else {
+					// append 文件
+					formData.append('file', file)
+					// 上传图片
+					imgUpload(formData).then(res => {
+						if (res.code === 200) {
+							state.imgs.push(res.data)
+							Toast.success('图片上传成功')
+						}
+					})
+				}
+			}
 			return {
 				...toRefs(state),
 				afterRead,
