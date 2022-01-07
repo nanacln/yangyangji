@@ -1,5 +1,9 @@
 <template>
   <div class="mine-box">
+		<div class="off-box">
+			<van-icon class="off" @click="offClick" name="upgrade" />
+		</div>
+		
     <img v-if="avatar" :src="imagePrefix+avatar" alt="" class="mine-img">
     <img v-else src="~@/assets/images/person.png" alt="" class="mine-img">
 		<van-uploader :after-read="afterRead" class="mine-upload" />
@@ -39,7 +43,10 @@
   :crop-width="200"
   :crop-height="200"
 ></vue-mocropper>
-<van-button style="margin-top:20px;" @click="update" type="primary" size="large">保存</van-button>
+
+<div class="btn-box">
+	<van-button class="save-btn" :round="true" @click="update" type="primary" size="large">保存</van-button>
+</div>
   </div>
 	<van-tabbar v-model="active" :route="true">
 		<van-tabbar-item to="/home" icon="home-o">首页</van-tabbar-item>
@@ -52,7 +59,8 @@
 import { defineComponent,reactive, toRefs,ref } from 'vue'
 import {getLocalStorage,setLocalStorage} from '@/tool/tool'
 import {updateUser,updateUserAvatar}from '@/api/common.api'
-import { Toast } from 'vant'
+import { Toast , Dialog} from 'vant'
+import { useRouter } from 'vue-router'
 import {updateUserInfo
 } from '@/types/common'
 export default defineComponent({
@@ -74,6 +82,18 @@ export default defineComponent({
 			})
 			let visible=ref(false)
 			let imgSrc=ref('')
+			const router = useRouter()
+			const offClick=()=>{
+				Dialog.confirm({
+					title: '',
+					message: '是否退出登录',
+				})
+					.then(() => {
+						localStorage.removeItem("userId")
+						router.push('/login')
+						// on confirm
+					})
+			}
 			const handleCropDone=(data:any)=>{
 				console.log(data,1111);
 				updateUserAvatar({file:data,userId:getLocalStorage('userId')})
@@ -127,6 +147,7 @@ export default defineComponent({
       return{
         ...toRefs(state),
         columns,
+				offClick,
 				onConfirm,
 				active,
 				update,
@@ -139,6 +160,21 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+.btn-box{
+	margin:40px 60px 0;
+}
+.off{
+	&-box{
+		margin:40px 36px;
+		display: flex;
+		justify-content: flex-end;
+	}
+	transform: rotate(90deg);
+	font-size: 60px;
+	&:active{
+		color:#00a4ff;
+	}
+}
 .mine-img{
 	width:160px;
 	height: 160px;

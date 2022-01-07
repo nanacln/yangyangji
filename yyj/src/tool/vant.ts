@@ -25,7 +25,8 @@ import {
   Tag,
 	CellGroup,
   Badge,
-	SwipeCell
+	SwipeCell,
+	Dialog
 } from 'vant'
 
 // https://vant-contrib.gitee.io/vant/v3/#/zh-CN
@@ -55,7 +56,8 @@ const plugins = [
   Tag,
 	CellGroup,
   Badge,
-	SwipeCell
+	SwipeCell,
+	Dialog
 ]
 export default{
   install: function(vm: App):void {

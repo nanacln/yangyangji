@@ -54,7 +54,9 @@
 			const afterRead = file => {
 				// 此时可以自行将文件上传至服务器
 				console.log(file)
-				minifyImage(file.file)
+				file.status = 'uploading';
+      file.message = '上传中...';
+				minifyImage(file)
 				// let formData = new FormData()
 				// formData.append('file', file.file)
 
@@ -88,8 +90,9 @@
 				})
 				console.log('sss')
 			}
-			const minifyImage=(file)=>{
+			const minifyImage=(fileobj)=>{
 				const formData = new FormData()
+				const file=fileobj.file
 
 				function photoCompress (file, w, objDiv) {
 					const ready = new FileReader()
@@ -153,6 +156,8 @@
 							if (res.code === 200) {
 								state.imgs.push(res.data)
 								Toast.success('图片上传成功')
+								fileobj.status = '';    					
+								fileobj.message = '';
 							}
 						})
 					})
@@ -164,6 +169,7 @@
 						if (res.code === 200) {
 							state.imgs.push(res.data)
 							Toast.success('图片上传成功')
+							
 						}
 					})
 				}
