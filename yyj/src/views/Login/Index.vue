@@ -50,10 +50,16 @@
 				login(values).then(res => {
 					console.log(res)
 					if (res.code === 200) {
-						const { userId, nickName, role } = res.data
+						const { userId, nickName, role,avatar } = res.data
 						setLocalStorage('userId', userId)
 						setLocalStorage('nickName', nickName)
 						setLocalStorage('role', role)
+						if(avatar){
+							setLocalStorage('avatar', avatar)
+						}else if(getLocalStorage('avatar')){
+							setLocalStorage('avatar', '')
+						}
+						
 						const url = (getLocalStorage('ucm_curUrl') as string) || '/'
 						router.push(url)
 					} else {

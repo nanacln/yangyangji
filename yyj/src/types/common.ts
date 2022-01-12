@@ -48,7 +48,7 @@ export type userInfo={
   role:string,
   nickName:string,
   userId:string,
-  
+  avatar?:string
 }
 export type relativerInfo={
   nickName:string,

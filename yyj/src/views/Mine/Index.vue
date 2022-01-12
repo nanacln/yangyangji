@@ -108,7 +108,7 @@ export default defineComponent({
 				})
 				
 			}
-			const afterRead=(file:any,detail:any)=>{
+			const afterRead=(file:any)=>{
 				visible.value=true
 				imgSrc.value=file.content
 

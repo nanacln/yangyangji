@@ -263,12 +263,13 @@ app.get('/api/login', (req, res) => {
 			return
 		}
 		if (data.length > 0) {
-			const { role, userId, nickName } = data[0]
+			const { role, userId, nickName,avatar } = data[0]
 			res.send({
 				data: {
 					role,
 					userId,
 					nickName,
+					avatar
 				},
 				code: 200,
 				msg: '请求成功',
