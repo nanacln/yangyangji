@@ -11,6 +11,7 @@
     "alloyfinger": "^0.1.16",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "md5": "^2.3.0",
     "postcss-px-to-viewport": "^1.1.1",
     "socket.io-client": "^4.1.2",
     "ts-import-plugin": "^1.6.7",

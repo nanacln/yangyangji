@@ -53,7 +53,8 @@ module.exports = {
 		proxy: {
 			'/api': {
 				// target: 'http://192.168.16.82:8078',
-				target: 'http://wenyangnana.com/',
+				// target: 'http://wenyangnana.com/',
+				target: 'http://10.40.162.167:8666/',
 				// ws: true,
 				changeOrigin: true,
 				pathRewrite: {

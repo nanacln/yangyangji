@@ -11,3 +11,6 @@ interface Window {
   vaptcha: any;
   TCPlayer: any
 }
+declare module 'md5'{
+  export default any
+}

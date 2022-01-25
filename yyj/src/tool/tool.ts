@@ -53,9 +53,9 @@ export function getSuffix(url:string):string {
   return arr[arr.length - 1];
 }
 
-const imagePrefix = "https://hr.xhd.cn";
+const imagePrefix1 = "https://hr.xhd.cn";
 
-export { imagePrefix };
+export { imagePrefix1 };
 
 
 //我的项目

@@ -255,8 +255,8 @@ app.post('/api/register', (req, res) => {
 	})
 	
 })
-app.get('/api/login', (req, res) => {
-	const { username, password } = req.query
+app.post('/api/login', (req, res) => {
+	const { username, password } = req.body
 	UserList.find({ username, password }).exec((err, data) => {
 		if (err) {
 			console.log(err)

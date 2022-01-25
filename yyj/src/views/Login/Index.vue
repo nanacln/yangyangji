@@ -38,6 +38,7 @@
 	import { setLocalStorage, getLocalStorage } from '@/tool/tool'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
+	import md5 from 'md5'
 	export default defineComponent({
 		setup() {
 			const form = reactive({
@@ -47,7 +48,9 @@
 			const router = useRouter()
 			const onSubmit = (values: registerInfo) => {
 				console.log('submit', values)
-				login(values).then(res => {
+				const params={...values}
+				params.password=md5(params.password)
+				login(params).then(res => {
 					console.log(res)
 					if (res.code === 200) {
 						const { userId, nickName, role,avatar } = res.data

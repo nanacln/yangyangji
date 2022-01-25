@@ -59,6 +59,7 @@
 	import { defineComponent, reactive, toRefs } from 'vue'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
+	import md5 from 'md5'
 	export default defineComponent({
 		setup() {
 			// type userInfo={
@@ -82,8 +83,11 @@
 				showPicker: false,
 			})
 			const onSubmit = (values: registerInfo) => {
-				console.log('submit', values)
-				register(values).then(res => {
+				
+				const params={...values}
+				params.password=md5(params.password)
+				console.log('submit', params)
+				register(params).then(res => {
 					console.log(res)
 					if (res.code === 200) {
 						Toast.success('注册成功，请使用用户名密码登录')

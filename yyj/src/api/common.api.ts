@@ -30,7 +30,7 @@ export function register(params:registerInfo):Promise<BaseResponse<string>>{
   return httpPost('/api/register',params)
 }
 export function login(params:loginInfo):Promise<BaseResponse<userInfo>>{
-  return httpGet<userInfo>('/api/login',params)
+  return httpPost<userInfo>('/api/login',params)
 }
 export function userList():Promise<BaseResponse<relativerInfo>>{
   return httpGet<relativerInfo>('/api/userlist',{})
