@@ -24,8 +24,8 @@ const io = require('socket.io')(http)
 //引入mongodb
 // const { MongoClient } = require('mongodb') //定义数据库连接的地址
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://106.14.172.134:27017/yangyangji', {
-// mongoose.connect('mongodb://nana:123456@127.0.0.1:30000/yangyangji', {
+// mongoose.connect('mongodb://106.14.172.134:27017/yangyangji', {
+mongoose.connect('mongodb://nana:123456@127.0.0.1:30000/yangyangji', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 })

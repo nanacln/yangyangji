@@ -13,7 +13,7 @@
 				v-for="(item, index) in chatArr"
 				:key="index"
 			>
-				<img class="chat-img" v-if="avatarObj[item.userId]" :src="avatarObj[item.userId]" />
+				<img class="chat-img" v-if="avatarObj[item.userId]" :src="imagePrefix+avatarObj[item.userId]" />
 				<img class="chat-img" v-else src="~@/assets/images/person.png" />
 				<div class="chat-content">{{ item.content }}</div>
 			</li>

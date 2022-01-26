@@ -61,7 +61,7 @@ import {getLocalStorage,setLocalStorage} from '@/tool/tool'
 import {updateUser,updateUserAvatar}from '@/api/common.api'
 import { Toast , Dialog} from 'vant'
 import { useRouter } from 'vue-router'
-import {updateUserInfo
+import {updateUserInfo,ImageFile
 } from '@/types/common'
 export default defineComponent({
   setup() {
@@ -70,6 +70,7 @@ export default defineComponent({
 				form: updateUserInfo,
 				avatar:string
 			}
+			
 			const state = reactive<stateModel>({
 				form: {
 					role: getLocalStorage('role'),
@@ -94,7 +95,7 @@ export default defineComponent({
 						// on confirm
 					})
 			}
-			const handleCropDone=(data:any)=>{
+			const handleCropDone=(data:string)=>{
 				console.log(data,1111);
 				updateUserAvatar({file:data,userId:getLocalStorage('userId')})
 				.then(res=>{
@@ -108,8 +109,9 @@ export default defineComponent({
 				})
 				
 			}
-			const afterRead=(file:any)=>{
+			const afterRead=(file:ImageFile)=>{
 				visible.value=true
+				
 				imgSrc.value=file.content
 
 			}
@@ -185,7 +187,7 @@ export default defineComponent({
 .mine{
 	&-upload{
 		position: absolute;
-		top:160px;
+		top:260px;
 		width:160px;
 		height: 160px;
 		left:0;

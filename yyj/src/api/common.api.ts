@@ -35,9 +35,9 @@ export function login(params:loginInfo):Promise<BaseResponse<userInfo>>{
 export function userList():Promise<BaseResponse<relativerInfo>>{
   return httpGet<relativerInfo>('/api/userlist',{})
 }
-export function updateUser(params:updateUserInfo){
+export function updateUser(params:updateUserInfo):Promise<BaseResponse<string>>{
   return httpPost('/api/updateUser',params)
 }
-export function updateUserAvatar(params:any){
+export function updateUserAvatar(params:{file:string,userId:string}):Promise<BaseResponse<string>>{
   return httpPost<string>('/api/uploadUserAvatar',params)
 }

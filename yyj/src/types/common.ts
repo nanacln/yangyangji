@@ -1,3 +1,5 @@
+
+export const name='commonType'
 export interface listModel<T extends any>{
   dataList:T[]
   pageNo?: number
@@ -14,8 +16,8 @@ export type paramList={
 	pageNo:number
 }
 export type growupRecordArr={
-  role:string
-  content:string
+  role:string,
+  content:string,
   imgs:string,
   comments?:string
 }[]
@@ -74,3 +76,10 @@ export type commentsModel={
   comments:string,
   nickName:string
 }
+export interface ImageFile{
+  content:string
+  file:File
+  message:string
+  status:string
+}
+

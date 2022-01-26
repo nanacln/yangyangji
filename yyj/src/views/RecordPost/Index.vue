@@ -169,7 +169,8 @@
 						if (res.code === 200) {
 							state.imgs.push(res.data)
 							Toast.success('图片上传成功')
-							
+							fileobj.status = '';    					
+							fileobj.message = '';
 						}
 					})
 				}
