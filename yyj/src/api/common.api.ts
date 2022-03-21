@@ -41,3 +41,6 @@ export function updateUser(params:updateUserInfo):Promise<BaseResponse<string>>{
 export function updateUserAvatar(params:{file:string,userId:string}):Promise<BaseResponse<string>>{
   return httpPost<string>('/api/uploadUserAvatar',params)
 }
+export function videoUpload(params:FormData):Promise<BaseResponse<string>>{
+  return httpPost('/api/videoupload',params)
+}

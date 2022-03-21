@@ -23,6 +23,13 @@
 				<van-uploader v-model="showImgs" :after-read="afterRead" />
 			</template>
 		</van-field>
+		<van-field name="uploaderVideo" label="视频上传">
+			<template #input>
+				<van-uploader v-if="!showVideos" accept="video/*" :after-read="afterReadVideo" />
+				<video class="video-box" v-else :src="imagePrefix+showVideos" controls="controls"/>
+			</template>
+		</van-field>
+		<video class="video-box" src="http://10.40.162.231:8666//videos/679804f13083baee9201356452039e1eb4.mp4"></video>
 		<!-- <div style="margin: 26px;">
     <van-button round block type="primary" native-type="submit">
       提交
@@ -34,7 +41,7 @@
 	import { reactive, toRefs, defineComponent } from 'vue'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
-	import { growuprecordSave, imgUpload } from '@/api/common.api'
+	import { growuprecordSave, imgUpload,videoUpload } from '@/api/common.api'
 	import { getLocalStorage } from '@/tool/tool'
 	export default defineComponent({
 		setup() {
@@ -48,9 +55,21 @@
 				},
 				imgs: [],
 				showImgs: [],
+				showVideos:''
 			})
 
 			let router = useRouter()
+			const afterReadVideo= file=>{
+				let formData = new FormData()
+				formData.append('file', file.file)
+
+				videoUpload(formData).then(res => {
+					if (res.code === 200) {
+						state.showVideos=res.data
+						Toast.success('视频上传成功')
+					}
+				})
+			}
 			const afterRead = file => {
 				// 此时可以自行将文件上传至服务器
 				console.log(file)
@@ -180,6 +199,7 @@
 				afterRead,
 				onClickLeft,
 				saveRecord,
+				afterReadVideo
 			}
 		},
 	})
@@ -189,5 +209,9 @@
 		&-box {
 			margin-top: 40px;
 		}
+	}
+	.video-box{
+		width:30vw;
+		height: 30vw;
 	}
 </style>
