@@ -25,11 +25,22 @@
 		</van-field>
 		<van-field name="uploaderVideo" label="视频上传">
 			<template #input>
-				<van-uploader v-if="!showVideos" accept="video/*" :after-read="afterReadVideo" />
-				<video class="video-box" v-else :src="imagePrefix+showVideos" controls="controls"/>
+				
+				<video class="video-box" ref="video" @click="playPause" v-if="videoUrl" :src="imagePrefix+videoUrl" />
+				<van-uploader  accept="video/*" :after-read="afterReadVideo" />
+				<div class="circle-box" v-if="showUploadProgress">
+					<van-circle
+						v-model:current-rate="currentRate"
+						:rate="rate"
+						:speed="100"
+						:size="80"
+						:text="uploadProgress"
+					/>
+<button @click="rate++">增加</button>
+				</div>
 			</template>
 		</van-field>
-		<video class="video-box" src="http://10.40.162.231:8666//videos/679804f13083baee9201356452039e1eb4.mp4"></video>
+		
 		<!-- <div style="margin: 26px;">
     <van-button round block type="primary" native-type="submit">
       提交
@@ -38,11 +49,12 @@
 	</div>
 </template>
 <script>
-	import { reactive, toRefs, defineComponent } from 'vue'
+	import { reactive, toRefs, defineComponent, ref ,computed} from 'vue'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
 	import { growuprecordSave, imgUpload,videoUpload } from '@/api/common.api'
 	import { getLocalStorage } from '@/tool/tool'
+	import uploadBigHook from '@/tool/uploadBigFile.js'
 	export default defineComponent({
 		setup() {
 			let state = reactive({
@@ -55,20 +67,35 @@
 				},
 				imgs: [],
 				showImgs: [],
-				showVideos:''
+				videoUrl:'',
+				currentRate:0,
+				rate:30,
+				showUploadProgress:false
 			})
-
+			let {uploadBig}=uploadBigHook(state)
+			const uploadProgress = computed(() => state.currentRate.toFixed(0) + '%');
+			let video=ref(null)
+			const playPause=()=>{
+				if(video.value.paused){
+					video.value.play()
+				}else{
+					video.value.pause()
+				}
+			}
 			let router = useRouter()
 			const afterReadVideo= file=>{
-				let formData = new FormData()
-				formData.append('file', file.file)
+				state.currentRate=0
+				state.showUploadProgress=true
+				uploadBig(file.file)
+				// let formData = new FormData()
+				// formData.append('file', file.file)
 
-				videoUpload(formData).then(res => {
-					if (res.code === 200) {
-						state.showVideos=res.data
-						Toast.success('视频上传成功')
-					}
-				})
+				// videoUpload(formData).then(res => {
+				// 	if (res.code === 200) {
+				// 		state.showVideos=res.data
+				// 		Toast.success('视频上传成功')  
+				// 	}
+				// })
 			}
 			const afterRead = file => {
 				// 此时可以自行将文件上传至服务器
@@ -107,7 +134,6 @@
 						
 					}
 				})
-				console.log('sss')
 			}
 			const minifyImage=(fileobj)=>{
 				const formData = new FormData()
@@ -199,12 +225,21 @@
 				afterRead,
 				onClickLeft,
 				saveRecord,
-				afterReadVideo
+				afterReadVideo,
+				playPause,
+				video,
+				uploadProgress,
 			}
 		},
 	})
 </script>
 <style lang="scss" scoped>
+.circle-box{
+	position:absolute;
+	z-index: 1;
+	background:#fff;
+	margin-right: 20px;
+}
 	.record {
 		&-box {
 			margin-top: 40px;

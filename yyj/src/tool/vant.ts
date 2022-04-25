@@ -26,7 +26,8 @@ import {
 	CellGroup,
   Badge,
 	SwipeCell,
-	Dialog
+	Dialog,
+	Circle
 } from 'vant'
 
 // https://vant-contrib.gitee.io/vant/v3/#/zh-CN
@@ -57,7 +58,8 @@ const plugins = [
 	CellGroup,
   Badge,
 	SwipeCell,
-	Dialog
+	Dialog,
+	Circle
 ]
 export default{
   install: function(vm: App):void {

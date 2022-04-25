@@ -21,6 +21,9 @@ const express = require('express')
 const app = express()
 const http = require('http').createServer(app)
 const io = require('socket.io')(http)
+// const dirPath = path.join(__dirname, "../static/");
+const dirPath = 'static/';
+const mergeFile = require('./tool/util');
 //引入mongodb
 // const { MongoClient } = require('mongodb') //定义数据库连接的地址
 const mongoose = require('mongoose')
@@ -79,7 +82,6 @@ io.on('connection', function (socket) {
 //配置路由
 app.get('/api/recordList', function (req, res) {
 	let { pageSize, pageNo } = req.query
-	console.log(req,'rrrrr')
 	pageSize = Number(pageSize)
 	pageNo = Number(pageNo)
 	GrowUpRecord.countDocuments({}, (err, count) => {
@@ -89,7 +91,11 @@ app.get('/api/recordList', function (req, res) {
 			.skip(pageSize * (pageNo - 1))
 			.exec((err, data) => {
 				if (err) {
-					console.log('查询成长记录出错', err)
+					res.send({
+						data: {},
+						code: 101,
+						msg: '查询成长记录失败',
+					})
 					return
 				}
 				res.send({
@@ -214,10 +220,9 @@ app.post('/api/record/comments', (req, res) => {
 app.post('/api/upload', (req, res) => {
 	var form = new formidable.IncomingForm()
 	form.parse(req, function (error, fields, files) {
-		console.log(files, files.file)
 		let name =
-			'/imgs/' + Math.floor(Math.random() * 100) + files.file.name
-		fs.writeFileSync('static'+name, fs.readFileSync(files.file.path))
+			'/imgs/' + Math.floor(Math.random() * 100) + files.file.originalFilename
+		fs.writeFileSync('static'+name, fs.readFileSync(files.file.filepath))
 		// let name = 'static/imgs/'
 		// let prefix = 'http://localhost:8666/'
 		res.send({
@@ -230,22 +235,159 @@ app.post('/api/upload', (req, res) => {
 	// writeStream.write()
 })
 app.post('/api/videoupload', (req, res) => {
-	var form = new formidable.IncomingForm()
+	var form = formidable({})
 	form.parse(req, function (error, fields, files) {
 		console.log(files, files.file)
 		let name =
-			'/videos/' + Math.floor(Math.random() * 100) + files.file.name
-		fs.writeFileSync('static'+name, fs.readFileSync(files.file.path))
-		// let name = 'static/imgs/'
-		// let prefix = 'http://localhost:8666/'
+			'/videos/' + Math.floor(Math.random() * 100) + files.file.originalFilename
+		fs.writeFileSync('static'+name, fs.readFileSync(files.file.filepath))
 		res.send({
 			code: 200,
 			msg: '请求成功',
 			data:  name,
 		})
 	})
-	// var writeStream = fs.createWriteStream('/static/imgs/11.jpg')
-	// writeStream.write()
+})
+app.post('/api/bigvideoupload', (req, res) => {
+  let type = req.query.type;
+  let md5Val = req.query.md5Val;
+  let total = req.query.total;
+  let bigDir = dirPath + "big/";
+  let typeArr = ["check", "upload", "merge"];
+  if (!type) {
+    return res.json({
+      code: 101,
+      msg: "get_fail",
+      info: "上传类型不能为空！",
+    });
+  }
+
+  if (!md5Val) {
+    return res.json({
+      code: 101,
+      msg: "get_fail",
+      info: "文件md5值不能为空！",
+    });
+  }
+
+  if (!total) {
+    return res.json({
+      code: 101,
+      msg: "get_fail",
+      info: "文件切片数量不能为空！",
+    });
+  }
+
+  if (!typeArr.includes(type)) {
+    return res.json({
+      code: 101,
+      msg: "get_fail",
+      info: "上传类型错误！",
+    });
+  }
+  function check() {
+    let filePath = `${bigDir}${md5Val}`;
+    fs.readdir(filePath, (err, data) => {
+      if (err) {
+        fs.mkdir(filePath, (err) => {
+          if (err) {
+            return res.json({
+              code: 101,
+              msg: "get_fail",
+              info: "获取失败！",
+              err,
+            });
+          } else {
+            return res.json({
+              code: 200,
+              msg: "get_succ",
+              info: "获取成功！",
+							chunk: [],
+							total: 0,
+            });
+          }
+        });
+      } else {
+        return res.json({
+          code: 200,
+          msg: "get_succ",
+          info: "获取成功！",
+					chunk: data,
+					total: data.length,
+        });
+      }
+    });
+  }
+  function upload() {
+    let current = req.query.current;
+    if (!current) {
+      return res.json({
+        code: 101,
+        msg: "get_fail",
+        info: "文件当前分片值不能为空！",
+      });
+    }
+
+    let form = formidable({
+      multiples: true,
+      uploadDir: `${dirPath}big/${md5Val}/`,
+    });
+
+    form.parse(req, (err, fields, files) => {
+      if (err) {
+        return res.json(err);
+      }
+      let newPath = `${dirPath}big/${md5Val}/${current}`;
+      fs.rename(files.file.filepath, newPath, function (err) {
+        if (err) {
+          return res.json(err);
+        }
+        return res.json({
+          code: 200,
+          msg: "get_succ",
+          info: "upload success!",
+        });
+      });
+    });
+  }
+  async function merge(){
+    let ext = req.query.ext;
+    if (!ext) {
+      return res.json({
+          code: 101,
+          msg: 'get_fail',
+					info: '文件后缀不能为空！'
+      })
+    }
+    
+    let oldPath = `${dirPath}big/${md5Val}`;
+    let newPath = `${dirPath}doc/${md5Val}.${ext}`;
+    let data = await mergeFile(oldPath, newPath);
+    
+    if (data.code == 200) {
+      return res.json({
+        code: 200,
+        msg: 'get_succ',
+        info: '文件合并成功！',
+        url: `/doc/${md5Val}.${ext}`
+      })
+    } else {
+      return res.json({
+        code: 101,
+        msg: 'get_fail',
+        info: '文件合并失败！',
+        err: data.data.error
+      })
+    }
+  }
+  
+  if (type === "check") {
+    check();
+  } else if (type === "upload") {
+    upload()
+  }else if (type === "merge"){
+    merge()
+  }
 })
 app.post('/api/register', (req, res) => {
 	var body = req.body
