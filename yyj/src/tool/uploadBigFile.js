@@ -45,23 +45,40 @@ function uploadBigHook(state) {
     });
   }
   async function checkUpload() {
+    const param={
+      type:'check',
+      current:1,
+      md5Val,
+      total:1
+    }
     let data = await axios({
-      url: `/api/bigvideoupload?type=check&current=1&md5Val=${md5Val}&total=1`,
+      url: `/api/bigFileUpload`,
       method: "post",
+      data: param,
     });
     if (data.data.code === 200) {
-      uploadChuncks = data.data.chunk
+      uploadChuncks = data.data.data.chunk
     }
   }
   async function uploadSlice(chunkIndex = 0) {
+    if(chunkIndex===fileArr.length-1){
+      mergeFile()
+      return
+    }
     if (uploadChuncks.includes(chunkIndex + '')) {
+      
       uploadSlice(chunkIndex + 1)
       return
     }
     let formData = new FormData();
     formData.append("file", fileArr[chunkIndex]);
+    formData.append('type','upload')
+    formData.append('current',chunkIndex)
+    formData.append('md5Val',md5Val)
+    formData.append('total',fileArr.length)
+
     let data = await axios({
-      url: `/api/bigvideoupload?type=upload&current=${chunkIndex}&md5Val=${md5Val}&total=${fileArr.length}`,
+      url: `/api/bigFileUpload?type=upload&current=${chunkIndex}&md5Val=${md5Val}&total=${fileArr.length}`,
       method: "post",
       data: formData,
     });
@@ -78,13 +95,23 @@ function uploadBigHook(state) {
   }
 
   async function mergeFile() {
-    let data = await axios.post(
-      `/api/bigvideoupload?type=merge&md5Val=${md5Val}&total=${fileArr.length}&ext=${ext}`
+    const param={
+      type:'merge',
+      ext,
+      md5Val,
+      total:fileArr.length
+    }
+    let data = await axios(
+      {
+        url:`/api/bigFileUpload`,
+        method:'POST',
+        data:param
+      }
     );
     if (data.data.code == 200) {
       state.rate = 100
 
-      state.videoUrl = data.data.url
+      state.videoUrl = data.data.data.url
       state.showUploadProgress = false
       nextTick(() => {
         state.currentRate = 0

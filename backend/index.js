@@ -248,43 +248,21 @@ app.post('/api/videoupload', (req, res) => {
 		})
 	})
 })
-app.post('/api/bigvideoupload', (req, res) => {
-  let type = req.query.type;
-  let md5Val = req.query.md5Val;
-  let total = req.query.total;
+app.post('/api/bigFileUpload', (req, res) => {
+	var body = req.body
+  let type = body.type;
+  let md5Val = body.md5Val||req.query.md5Val;
   let bigDir = dirPath + "big/";
-  let typeArr = ["check", "upload", "merge"];
-  if (!type) {
+
+	if (!md5Val) {
     return res.json({
       code: 101,
-      msg: "get_fail",
-      info: "上传类型不能为空！",
+      msg: "文件md5值不能为空！",
+      data:''
     });
   }
 
-  if (!md5Val) {
-    return res.json({
-      code: 101,
-      msg: "get_fail",
-      info: "文件md5值不能为空！",
-    });
-  }
-
-  if (!total) {
-    return res.json({
-      code: 101,
-      msg: "get_fail",
-      info: "文件切片数量不能为空！",
-    });
-  }
-
-  if (!typeArr.includes(type)) {
-    return res.json({
-      code: 101,
-      msg: "get_fail",
-      info: "上传类型错误！",
-    });
-  }
+  
   function check() {
     let filePath = `${bigDir}${md5Val}`;
     fs.readdir(filePath, (err, data) => {
@@ -293,41 +271,34 @@ app.post('/api/bigvideoupload', (req, res) => {
           if (err) {
             return res.json({
               code: 101,
-              msg: "get_fail",
-              info: "获取失败！",
-              err,
+              msg: "获取失败！",
+              data:{}
             });
           } else {
             return res.json({
               code: 200,
-              msg: "get_succ",
-              info: "获取成功！",
-							chunk: [],
-							total: 0,
+              msg: "获取成功！",
+              data:{
+								chunk: [],
+							}
+							
             });
           }
         });
       } else {
         return res.json({
           code: 200,
-          msg: "get_succ",
-          info: "获取成功！",
-					chunk: data,
-					total: data.length,
+          msg: "获取成功！",
+          data: {
+						chunk: data,
+					},
+					
         });
       }
     });
   }
   function upload() {
-    let current = req.query.current;
-    if (!current) {
-      return res.json({
-        code: 101,
-        msg: "get_fail",
-        info: "文件当前分片值不能为空！",
-      });
-    }
-
+		
     let form = formidable({
       multiples: true,
       uploadDir: `${dirPath}big/${md5Val}/`,
@@ -337,6 +308,23 @@ app.post('/api/bigvideoupload', (req, res) => {
       if (err) {
         return res.json(err);
       }
+			const {current,type}=fields
+			if(type!=='upload'){
+				let msg=upload?'上次类型值错误':"上传类型不能为空！"
+				return res.json({
+					code: 101,
+					msg,
+					data:'',
+				});
+			}
+			if (!current) {
+				return res.json({
+					code: 101,
+					msg: "文件当前分片值不能为空！",
+					data: "",
+				});
+			}
+			console.log(fields,7777777777);
       let newPath = `${dirPath}big/${md5Val}/${current}`;
       fs.rename(files.file.filepath, newPath, function (err) {
         if (err) {
@@ -345,18 +333,18 @@ app.post('/api/bigvideoupload', (req, res) => {
         return res.json({
           code: 200,
           msg: "get_succ",
-          info: "upload success!",
+          data: "",
         });
       });
     });
   }
   async function merge(){
-    let ext = req.query.ext;
+    let ext = req.body.ext;
     if (!ext) {
       return res.json({
           code: 101,
-          msg: 'get_fail',
-					info: '文件后缀不能为空！'
+          msg: '文件后缀不能为空！',
+					data: ''
       })
     }
     
@@ -367,27 +355,27 @@ app.post('/api/bigvideoupload', (req, res) => {
     if (data.code == 200) {
       return res.json({
         code: 200,
-        msg: 'get_succ',
-        info: '文件合并成功！',
-        url: `/doc/${md5Val}.${ext}`
+        msg: '文件合并成功！',
+        data: {
+					url: `/doc/${md5Val}.${ext}`
+				}
       })
     } else {
       return res.json({
         code: 101,
-        msg: 'get_fail',
-        info: '文件合并失败！',
-        err: data.data.error
+        msg: '文件合并失败！',
+        data: data.data.error
       })
     }
   }
   
   if (type === "check") {
     check();
-  } else if (type === "upload") {
-    upload()
-  }else if (type === "merge"){
+  } else if (type === "merge"){
     merge()
-  }
+  }else{
+		upload()
+	}
 })
 app.post('/api/register', (req, res) => {
 	var body = req.body
