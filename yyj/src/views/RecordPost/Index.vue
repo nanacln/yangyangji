@@ -26,7 +26,7 @@
 		<van-field name="uploaderVideo" label="视频上传">
 			<template #input>
 				
-				<video class="video-box" ref="video" @click="playPause" v-if="videoUrl" :src="imagePrefix+videoUrl" />
+				<video class="video-box" ref="video" @click="playPause" v-if="form.videoUrl" :src="imagePrefix+form.videoUrl" />
 				<van-uploader  accept="video/*" :after-read="afterReadVideo" />
 				<div class="circle-box" v-if="showUploadProgress">
 					<van-circle
@@ -64,10 +64,11 @@
 					role: getLocalStorage('role'),
 					userId: getLocalStorage('userId'),
 					nickName: getLocalStorage('nickName'),
+					videoUrl:''
 				},
 				imgs: [],
 				showImgs: [],
-				videoUrl:'',
+				// videoUrl:'',
 				currentRate:0,
 				rate:30,
 				showUploadProgress:false

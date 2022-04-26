@@ -37,6 +37,9 @@
 						@click="PreviewImage(item.imgs)"
 					/>
 				</van-row>
+				<div v-if="item.videoUrl">
+					<video class="video-item" controls :src="imagePrefix+item.videoUrl"></video>
+				</div>
 				<div class="comments-bar">
 					<van-icon class="comments-icon" name="chat-o" @click="toComment(item.id,index)" />
 				</div>
@@ -72,7 +75,7 @@
 </template>
 
 <script lang="ts">
-	import { defineComponent, reactive, ref,nextTick } from 'vue'
+	import { defineComponent, reactive, ref,nextTick,getCurrentInstance } from 'vue'
 	import { growuprecordList ,updateComments} from '@/api/common.api'
 	import { growupRecordArr} from '@/types/common'
 	import { useRouter } from 'vue-router'
@@ -100,6 +103,7 @@
 				commentId:number,
 				commentFlag:boolean
 			}
+			const cns=getCurrentInstance()
 			const router = useRouter()
 			const state = reactive<stateModel>({
 				list: [],
@@ -163,7 +167,8 @@
 			}
 			const active = ref(0)
 			const PreviewImage = (arr: string[]) => {
-				ImagePreview(arr)
+				
+				ImagePreview(arr.map(e=>(cns as any).appContext.config.globalProperties.imagePrefix+e))
 			}
 			const showComment=(b:boolean)=>{
 				if(b){
@@ -231,6 +236,11 @@
 	})
 </script>
 <style lang="scss" scoped>
+.video-item{
+	width:710px;
+	height: 430px;
+	margin-top: 30px;
+}
 .footer{
 	&-comment{
 		display: flex;

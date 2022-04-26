@@ -40,7 +40,8 @@ const GrowUpRecordSchema = mongoose.Schema({
 	imgs: String,
 	comments:String,
 	createTime:Number,
-	id:Number
+	id:Number,
+	videoUrl: String
 })
 const GrowUpRecord = mongoose.model(
 	'GrowUpRecord',
@@ -324,7 +325,6 @@ app.post('/api/bigFileUpload', (req, res) => {
 					data: "",
 				});
 			}
-			console.log(fields,7777777777);
       let newPath = `${dirPath}big/${md5Val}/${current}`;
       fs.rename(files.file.filepath, newPath, function (err) {
         if (err) {

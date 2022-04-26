@@ -74,11 +74,10 @@ function uploadBigHook(state) {
     formData.append("file", fileArr[chunkIndex]);
     formData.append('type','upload')
     formData.append('current',chunkIndex)
-    formData.append('md5Val',md5Val)
     formData.append('total',fileArr.length)
 
     let data = await axios({
-      url: `/api/bigFileUpload?type=upload&current=${chunkIndex}&md5Val=${md5Val}&total=${fileArr.length}`,
+      url: `/api/bigFileUpload?md5Val=${md5Val}`,
       method: "post",
       data: formData,
     });
@@ -111,7 +110,7 @@ function uploadBigHook(state) {
     if (data.data.code == 200) {
       state.rate = 100
 
-      state.videoUrl = data.data.data.url
+      state.form.videoUrl = data.data.data.url
       state.showUploadProgress = false
       nextTick(() => {
         state.currentRate = 0
