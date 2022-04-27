@@ -7,6 +7,7 @@ function uploadBigHook(state) {
   let fileArr = []
   let uploadChuncks = []
   let md5Val = ''
+  const alreadyUpChuncks={}
 
   async function uploadBig(file) {
 
@@ -58,6 +59,9 @@ function uploadBigHook(state) {
     });
     if (data.data.code === 200) {
       uploadChuncks = data.data.data.chunk
+      uploadChuncks.forEach(e=>{
+        alreadyUpChuncks[e]=1
+      })
     }
   }
   async function uploadSlice(chunkIndex = 0) {
@@ -65,8 +69,9 @@ function uploadBigHook(state) {
       mergeFile()
       return
     }
-    if (uploadChuncks.includes(chunkIndex + '')) {
-      
+    if (alreadyUpChuncks[chunkIndex ]) {
+      ++chunkIndex;
+      state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
       uploadSlice(chunkIndex + 1)
       return
     }
@@ -84,8 +89,8 @@ function uploadBigHook(state) {
 
     if (data.data.code == 200) {
       if (chunkIndex < fileArr.length - 1) {
-        state.rate = Math.round(((chunkIndex + 1) / fileArr.length) * 100)
         ++chunkIndex;
+        state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
         uploadSlice(chunkIndex);
       } else {
         mergeFile();

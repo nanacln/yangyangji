@@ -135,7 +135,6 @@
 			const onLoad = () => {
 				// 异步更新数据
 				growuprecordList(state.params).then(res => {
-					console.log(res, 6666666)
 					res.data.list.forEach(val => {
 						if (val.imgs) {
 							// debugger
