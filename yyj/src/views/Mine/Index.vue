@@ -96,7 +96,6 @@ export default defineComponent({
 					})
 			}
 			userList(getLocalStorage('userId')).then(res=>{
-				console.log(999,res);
 				if(res.code===200){
 					const {role,nickName,avatar}=res.data[0]
 					state.form.role=role

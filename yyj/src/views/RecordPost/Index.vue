@@ -54,7 +54,7 @@
 	import { Toast } from 'vant'
 	import { growuprecordSave, imgUpload,videoUpload } from '@/api/common.api'
 	import { getLocalStorage } from '@/tool/tool'
-	import uploadBigHook from '@/tool/uploadBigFile.js'
+	import uploadBigHook from '@/tool/uploadBigFile'
 	export default defineComponent({
 		setup() {
 			let state = reactive({

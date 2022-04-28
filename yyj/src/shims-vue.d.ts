@@ -14,3 +14,6 @@ interface Window {
 declare module 'md5'{
   export default any
 }
+declare module 'spark-md5'{
+  export default any
+}

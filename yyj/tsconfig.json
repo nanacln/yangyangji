@@ -32,7 +32,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-, "src/tool/uploadBigFile.js"  ],
+, "src/tool/uploadBigFile.ts"  ],
   "exclude": [
     "node_modules"
   ]

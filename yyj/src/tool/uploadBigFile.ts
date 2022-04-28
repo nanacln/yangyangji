@@ -2,17 +2,17 @@ import axios from 'axios'
 import SparkMD5 from 'spark-md5'
 import { nextTick } from 'vue'
 import { Toast } from 'vant'
-function uploadBigHook(state) {
+function uploadBigHook(state:any) {
   let ext = '',
-    fileArr = [],
+    fileArr:Array<Blob> = [],
     uploadChuncks = [],
     md5Val = ''
-  const alreadyUpChuncks={}
+  const alreadyUpChuncks:{[propName:number]:Number}={}
   let startTime=0
-  async function uploadBig(file) {
+  async function uploadBig(file:any) {
     ext = file.name.substr(file.name.lastIndexOf('.') + 1)
     fileArr = sliceFile(file)
-    md5Val = await md5File([file])
+    md5Val = await md5File([file]) as string
     await checkUpload()
     //多个请求并发
     ManyUploadSlice()
@@ -21,27 +21,27 @@ function uploadBigHook(state) {
     // uploadSlice()
   }
   // 切割文件
-  function sliceFile(file) {
+  function sliceFile(file:Blob) {
     const files = [];
     const chunkSize = 1000 * 1024;
     for (let i = 0; i < file.size; i += chunkSize) {
       const end = i + chunkSize >= file.size ? file.size : i + chunkSize;
-      let currentFile = file.slice(i, end > file.size ? file.size : end);
+      const currentFile = file.slice(i, end > file.size ? file.size : end);
       files.push(currentFile);
     }
     return files;
   }
   // 获取文件md5值
-  function md5File(files) {
+  function md5File(files:Array<Blob>) {
     const spark = new SparkMD5.ArrayBuffer();
-    let fileReader;
+    let fileReader=null as unknown as FileReader;
     for (var i = 0; i < files.length; i++) {
       fileReader = new FileReader();
       fileReader.readAsArrayBuffer(files[i]);
     }
     return new Promise((resolve) => {
       fileReader.onload = function (e) {
-        spark.append(e.target.result);
+        spark.append((e.target as FileReader).result);
         if (i == files.length) {
           resolve(spark.end());
         }
@@ -55,14 +55,14 @@ function uploadBigHook(state) {
       md5Val,
       total:1
     }
-    let data = await axios({
+    const data = await axios({
       url: `/api/bigFileUpload`,
       method: "post",
       data: param,
     });
     if (data.data.code === 200) {
       uploadChuncks = data.data.data.chunk
-      uploadChuncks.forEach(e=>{
+      uploadChuncks.forEach((e:number)=>{
         alreadyUpChuncks[e]=1
       })
     }
@@ -71,13 +71,13 @@ function uploadBigHook(state) {
     let mergeFlag=false
     let preIndex=-1
     let NextIndex=0
-    let len=5<fileArr.length?5:fileArr.length
+    const len=5<fileArr.length?5:fileArr.length
     startTime=new Date().getTime()
     console.log('start',startTime);
     for(let i=0;i<len&&!mergeFlag;i++){
       singleUpload(++preIndex,i)
     }
-    function singleUpload(chunkIndex,i){
+    function singleUpload(chunkIndex:number,i:number){
       if(chunkIndex===fileArr.length){
         mergeFlag=true
         NextIndex=0
@@ -93,11 +93,11 @@ function uploadBigHook(state) {
         singleUpload(preIndex,i )
         return
       }
-      let formData = new FormData();
+      const formData = new FormData();
       formData.append("file", fileArr[chunkIndex]);
       formData.append('type','upload')
-      formData.append('current',chunkIndex)
-      formData.append('total',fileArr.length)
+      formData.append('current',chunkIndex+'')
+      formData.append('total',fileArr.length+'')
 
        axios({
         url: `/api/bigFileUpload?md5Val=${md5Val}`,
@@ -141,13 +141,13 @@ function uploadBigHook(state) {
       uploadSlice(chunkIndex + 1)
       return
     }
-    let formData = new FormData();
-    formData.append("file", fileArr[chunkIndex]);
+    const formData = new FormData();
+    formData.append("file", fileArr[chunkIndex] as Blob);
     formData.append('type','upload')
-    formData.append('current',chunkIndex)
-    formData.append('total',fileArr.length)
+    formData.append('current',chunkIndex+'')
+    formData.append('total',fileArr.length +'')
 
-    let data = await axios({
+    const data = await axios({
       url: `/api/bigFileUpload?md5Val=${md5Val}`,
       method: "post",
       data: formData,
@@ -171,7 +171,7 @@ function uploadBigHook(state) {
       md5Val,
       total:fileArr.length
     }
-    let data = await axios(
+    const data = await axios(
       {
         url:`/api/bigFileUpload`,
         method:'POST',
