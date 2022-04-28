@@ -7,7 +7,11 @@ function uploadBigHook(state) {
   let fileArr = []
   let uploadChuncks = []
   let md5Val = ''
+  let preIndex=-1
+  let NextIndex=0
+  let mergeFlag=false
   const alreadyUpChuncks={}
+  
 
   async function uploadBig(file) {
 
@@ -15,7 +19,8 @@ function uploadBigHook(state) {
     fileArr = sliceFile(file)
     md5Val = await md5File([file])
     await checkUpload()
-    uploadSlice()
+    ManyUploadSlice()
+    // uploadSlice()
   }
   // 切割文件
   function sliceFile(file) {
@@ -62,6 +67,63 @@ function uploadBigHook(state) {
       uploadChuncks.forEach(e=>{
         alreadyUpChuncks[e]=1
       })
+    }
+  }
+   function ManyUploadSlice(){
+    let len=5<fileArr.length?5:fileArr.length
+    for(let i=0;i<len&&!mergeFlag;i++){
+      singleUpload(++preIndex,i)
+    }
+    function singleUpload(chunkIndex,i){
+      if(chunkIndex===fileArr.length){
+        mergeFlag=true
+        NextIndex=0
+        preIndex=-1
+        mergeFile()
+        return
+      }
+      if (alreadyUpChuncks[chunkIndex ]) {
+        ++chunkIndex;
+        ++preIndex
+        ++NextIndex
+        state.rate = Math.round(((NextIndex ) / fileArr.length) * 100)
+        singleUpload(preIndex,i )
+        return
+      }
+      let formData = new FormData();
+      formData.append("file", fileArr[chunkIndex]);
+      formData.append('type','upload')
+      formData.append('current',chunkIndex)
+      formData.append('total',fileArr.length)
+
+       axios({
+        url: `/api/bigFileUpload?md5Val=${md5Val}`,
+        method: "post",
+        data: formData,
+      }).then(data=>{
+        if (data.data.code == 200) {
+          if (preIndex < fileArr.length - 1) {
+            ++NextIndex
+            state.rate = Math.round(((NextIndex ) / fileArr.length) * 100)
+            singleUpload(++preIndex,i);
+          } else{
+            ++NextIndex
+            if(NextIndex===fileArr.length){
+              mergeFlag=true
+              NextIndex=0
+              preIndex=-1
+              mergeFile()
+            }else{
+              state.rate = Math.round(((NextIndex ) / fileArr.length) * 100)
+            }
+            
+          }
+          console.log(chunkIndex,999999,i,NextIndex);
+          
+        }
+      });
+
+      
     }
   }
   async function uploadSlice(chunkIndex = 0) {
@@ -114,7 +176,7 @@ function uploadBigHook(state) {
     );
     if (data.data.code == 200) {
       state.rate = 100
-
+      mergeFlag=false
       state.form.videoUrl = data.data.data.url
       state.showUploadProgress = false
       nextTick(() => {
