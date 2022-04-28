@@ -58,7 +58,7 @@
 <script lang="ts">
 import { defineComponent,reactive, toRefs,ref } from 'vue'
 import {getLocalStorage,setLocalStorage} from '@/tool/tool'
-import {updateUser,updateUserAvatar}from '@/api/common.api'
+import {updateUser,updateUserAvatar,userList}from '@/api/common.api'
 import { Toast , Dialog} from 'vant'
 import { useRouter } from 'vue-router'
 import {updateUserInfo,ImageFile
@@ -95,8 +95,20 @@ export default defineComponent({
 						// on confirm
 					})
 			}
+			userList(getLocalStorage('userId')).then(res=>{
+				console.log(999,res);
+				if(res.code===200){
+					const {role,nickName,avatar}=res.data[0]
+					state.form.role=role
+					setLocalStorage('role',role)
+					state.form.nickName=nickName
+					setLocalStorage('nickName',nickName)
+					state.avatar=avatar as string
+					setLocalStorage('avatar',avatar as string)
+				}
+				
+			})
 			const handleCropDone=(data:string)=>{
-				console.log(data,1111);
 				updateUserAvatar({file:data,userId:getLocalStorage('userId')})
 				.then(res=>{
 					if(res.code===200){

@@ -94,7 +94,7 @@
 				userId: getLocalStorage('userId'),
 				unreadObj: {},
 			})
-			userList().then(res => {
+			userList('').then(res => {
 				if (res.code === 200) {
 					state.list = res.data
 				}

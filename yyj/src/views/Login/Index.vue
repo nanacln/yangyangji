@@ -51,7 +51,6 @@
 				const params={...values}
 				params.password=md5(params.password)
 				login(params).then(res => {
-					console.log(res)
 					if (res.code === 200) {
 						const { userId, nickName, role,avatar } = res.data
 						setLocalStorage('userId', userId)

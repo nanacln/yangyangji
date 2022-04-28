@@ -32,8 +32,8 @@ export function register(params:registerInfo):Promise<BaseResponse<string>>{
 export function login(params:loginInfo):Promise<BaseResponse<userInfo>>{
   return httpPost<userInfo>('/api/login',params)
 }
-export function userList():Promise<BaseResponse<relativerInfo>>{
-  return httpGet<relativerInfo>('/api/userlist',{})
+export function userList(userId:string):Promise<BaseResponse<relativerInfo>>{
+  return httpGet<relativerInfo>('/api/userlist',{userId})
 }
 export function updateUser(params:updateUserInfo):Promise<BaseResponse<string>>{
   return httpPost('/api/updateUser',params)

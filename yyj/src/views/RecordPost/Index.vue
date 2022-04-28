@@ -70,7 +70,7 @@
 				showImgs: [],
 				// videoUrl:'',
 				currentRate:0,
-				rate:30,
+				rate:0,
 				showUploadProgress:false
 			})
 			let {uploadBig}=uploadBigHook(state)

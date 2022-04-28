@@ -4,8 +4,8 @@ const path = require('path');
 function mergeFile(filePath, newPath) {
   return new Promise((resolve, reject) => {
     let files = fs.readdirSync(filePath),
-      newFile = fs.createWriteStream(newPath);
-    let filesArr = arrSort(files).reverse();
+      newFile = fs.createWriteStream(newPath),
+      filesArr = arrSort(files).reverse();
     main();
     function main(index = 0) {
       let currentFile = filePath + '/' + filesArr[index];
@@ -16,8 +16,15 @@ function mergeFile(filePath, newPath) {
           index++;
           main(index);
         } else {
-          await rmdirAsync(filePath)
-          resolve({ code: 200 });
+          try{
+            await rmdirAsync(filePath)
+            resolve({ code: 200 });
+          }catch{
+            //删除上传的音频切片文件夹失败，此时音频已合并成功
+            resolve({ code: 200 });
+          }
+          
+          
         }
       })
       stream.on('error', function (error) {

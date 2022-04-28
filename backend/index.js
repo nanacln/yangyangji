@@ -434,7 +434,11 @@ app.post('/api/login', (req, res) => {
 	
 })
 app.get('/api/userlist', (req, res) => {
-	UserList.find({}).exec((err, data) => {
+	const param={}
+	if(req.query.userId){
+		param.userId=Number(req.query.userId) 
+	}
+	UserList.find(param).exec((err, data) => {
 		if (err) {
 			console.log(err)
 			return

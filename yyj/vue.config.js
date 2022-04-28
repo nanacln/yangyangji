@@ -52,8 +52,7 @@ module.exports = {
 	devServer: {
 		proxy: {
 			'/api': {
-				// target: 'http://192.168.16.82:8078',
-				// target: 'http://wenyangnana.com/',
+				// target: 'http://106.14.172.134/',
 				target: 'http://10.40.162.231:8666/',
 				// ws: true,
 				changeOrigin: true,

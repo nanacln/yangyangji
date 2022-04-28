@@ -31,7 +31,8 @@ app.config.globalProperties.$filters = {
   
 }
 
-// app.config.globalProperties.imagePrefix='http://wenyangnana.com'
+// app.config.globalProperties.imagePrefix='http://106.14.172.134'
 // app.config.globalProperties.imagePrefix='http://10.40.162.167:8666/'
 app.config.globalProperties.imagePrefix=process.env.NODE_ENV==='development'?'http://10.40.162.231:8666/':''
+// app.config.globalProperties.imagePrefix=process.env.NODE_ENV==='development'?'http://106.14.172.134':''
 app.mount('#app')

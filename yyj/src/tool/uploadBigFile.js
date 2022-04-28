@@ -3,29 +3,27 @@ import SparkMD5 from 'spark-md5'
 import { nextTick } from 'vue'
 import { Toast } from 'vant'
 function uploadBigHook(state) {
-  let ext = ''
-  let fileArr = []
-  let uploadChuncks = []
-  let md5Val = ''
-  let preIndex=-1
-  let NextIndex=0
-  let mergeFlag=false
+  let ext = '',
+    fileArr = [],
+    uploadChuncks = [],
+    md5Val = ''
   const alreadyUpChuncks={}
-  
-
+  let startTime=0
   async function uploadBig(file) {
-
     ext = file.name.substr(file.name.lastIndexOf('.') + 1)
     fileArr = sliceFile(file)
     md5Val = await md5File([file])
     await checkUpload()
+    //多个请求并发
     ManyUploadSlice()
+    //一次上传一个请求
+    // startTime=new Date().getTime()
     // uploadSlice()
   }
   // 切割文件
   function sliceFile(file) {
     const files = [];
-    const chunkSize = 500 * 1024;
+    const chunkSize = 1000 * 1024;
     for (let i = 0; i < file.size; i += chunkSize) {
       const end = i + chunkSize >= file.size ? file.size : i + chunkSize;
       let currentFile = file.slice(i, end > file.size ? file.size : end);
@@ -70,7 +68,12 @@ function uploadBigHook(state) {
     }
   }
    function ManyUploadSlice(){
+    let mergeFlag=false
+    let preIndex=-1
+    let NextIndex=0
     let len=5<fileArr.length?5:fileArr.length
+    startTime=new Date().getTime()
+    console.log('start',startTime);
     for(let i=0;i<len&&!mergeFlag;i++){
       singleUpload(++preIndex,i)
     }
@@ -127,6 +130,7 @@ function uploadBigHook(state) {
     }
   }
   async function uploadSlice(chunkIndex = 0) {
+    
     if(chunkIndex===fileArr.length-1){
       mergeFile()
       return
@@ -176,9 +180,9 @@ function uploadBigHook(state) {
     );
     if (data.data.code == 200) {
       state.rate = 100
-      mergeFlag=false
       state.form.videoUrl = data.data.data.url
       state.showUploadProgress = false
+      console.log('end',new Date().getTime()-startTime);
       nextTick(() => {
         state.currentRate = 0
         state.rate = 0
