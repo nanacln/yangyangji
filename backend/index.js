@@ -41,7 +41,8 @@ const GrowUpRecordSchema = mongoose.Schema({
 	comments:String,
 	createTime:Number,
 	id:Number,
-	videoUrl: String
+	videoUrl: String,
+	likes: Array
 })
 const GrowUpRecord = mongoose.model(
 	'GrowUpRecord',
@@ -181,6 +182,46 @@ app.post('/api/record/add', (req, res) => {
 	})
 	
 	
+})
+app.post('/api/record/delete', (req, res) => {
+	var body = req.body
+	GrowUpRecord.deleteOne({id:body.id},(err,data)=>{
+		if (err) {
+			res.send({ code: 100, msg: '', data: '删除失败' })
+			return
+		}
+		res.send({ code: 200, msg: '请求成功', data: '删除成功' })
+	})
+})
+app.post('/api/record/like', (req, res) => {
+	var body = req.body
+	GrowUpRecord.find({id:body.id},(err,data)=>{
+		if (err) {
+			res.send({ code: 100, msg: '', data: '点赞失败' })
+			return
+		}
+		if(data.length===1){
+			const arr=data[0].likes
+			let arr2=[]
+			let flag=arr.some(e=>e.userId===body.userId)
+			if(flag){
+				arr2=arr.filter(i=>i.userId!==body.userId)
+			}else{
+				arr.push({
+					userId:body.userId,
+					userName:body.userName
+				})
+				arr2=arr
+			}
+			GrowUpRecord.updateOne({id:body.id},{$set:{likes:arr2}},(err,data)=>{
+				if(err){
+					res.send({ code: 100, msg: '操作成功', data:''})
+				}
+				res.send({ code: 200, msg: '请求成功', data:arr2})
+				return
+			})
+		}
+	})
 })
 app.post('/api/record/comments', (req, res) => {
 	var body = req.body
@@ -453,6 +494,7 @@ app.get('/api/userlist', (req, res) => {
 })
 app.post('/api/updateUser', (req, res) => {
 	const { userId, nickName, role } = req.body
+	
 	UserList.updateOne(
 		{ userId: Number(userId) },
 		{ $set: { nickName: nickName, role: role } },
@@ -468,6 +510,14 @@ app.post('/api/updateUser', (req, res) => {
 			})
 		}
 	)
+	UserList.find({userId:userId},(err,data)=>{
+		if(err){
+			return
+		}
+		if(data[0].nickName!==nickName){
+
+		}
+	})
 
 })
 app.post('/api/uploadUserAvatar', (req, res) => {

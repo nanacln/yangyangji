@@ -11,4 +11,8 @@
 		// text-align: center;
 		color: #333;
 	}
+	.container{
+		width:750px;
+		margin:0 auto;
+	}
 </style>

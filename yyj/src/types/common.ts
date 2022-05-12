@@ -19,7 +19,9 @@ export type growupRecordArr={
   role:string,
   content:string,
   imgs:string,
-  comments?:string
+  comments?:string,
+  likes:{userId:number,userName:string}[],
+  like:boolean
 }[]
 export interface pageList<T>{
   list:T

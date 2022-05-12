@@ -19,6 +19,12 @@ export function growuprecordList(params:paramList):Promise<BaseResponse<growupRe
 export function growuprecordSave(params:recoredSaveModel):Promise<BaseResponse<string>>{
   return httpPost('/api/record/add',params)
 }
+export function growuprecordDelete(params:{id:number}):Promise<BaseResponse<string>>{
+  return httpPost('/api/record/delete',params)
+}
+export function growuprecordlike(params:{id:number,userId:number,userName:string}):Promise<BaseResponse<{userId:number,userName:string}[]>>{
+  return httpPost('/api/record/like',params)
+}
 export function updateComments(params:commentsModel):Promise<BaseResponse<string>>{
   return httpPost('/api/record/comments',params)
 }

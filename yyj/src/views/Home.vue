@@ -41,7 +41,14 @@
 					<video class="video-item" controls :src="imagePrefix+item.videoUrl"></video>
 				</div>
 				<div class="comments-bar">
-					<van-icon class="comments-icon" name="chat-o" @click="toComment(item.id,index)" />
+					<van-icon v-if="state.userId == item.userId" name="delete-o" class="comments-icon" @click="deleteComment(item.id)" />
+					<div v-else></div>
+					<div>
+						<van-icon class="comments-icon" :class="{red:item.like}" @click="commentLike(item.id,index)"  :name="item.like?'like':'like-o'" />
+						<!-- <van-icon class="comments-icon" name="like" /> -->
+						<van-icon class="comments-icon" name="chat-o" @click="toComment(item.id,index)" />
+					</div>
+					
 				</div>
 				<div class="comments-box" v-if="item.comments">
 					<div class="comments-item" v-for="v in JSON.parse(item.comments)" :key="v.comments+v.userId">
@@ -76,14 +83,14 @@
 
 <script lang="ts">
 	import { defineComponent, reactive, ref,nextTick,getCurrentInstance } from 'vue'
-	import { growuprecordList ,updateComments} from '@/api/common.api'
+	import { growuprecordList ,updateComments,growuprecordDelete,growuprecordlike} from '@/api/common.api'
 	import { growupRecordArr} from '@/types/common'
 	import { useRouter } from 'vue-router'
 	import {
 		getLocalStorage,
 		setLocalStorage
 	} from '@/tool/tool'
-	import { ImagePreview } from 'vant'
+	import { ImagePreview ,Dialog, Toast} from 'vant'
 	// import io from 'socket.io-client'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
@@ -101,7 +108,8 @@
 				},
 				comments:string,
 				commentId:number,
-				commentFlag:boolean
+				commentFlag:boolean,
+				userId:string
 			}
 			const cns=getCurrentInstance()
 			const router = useRouter()
@@ -115,7 +123,8 @@
 				},
 				comments:'',
 				commentId:0,
-				commentFlag:false
+				commentFlag:false,
+				userId: getLocalStorage('userId'),
 			})
 			let curComment=0
 			// const websocket =new WebSocket('ws://localhost:3000/')
@@ -131,7 +140,33 @@
 			// 	console.log(data,6666);
 
 			// })
-
+			const commentLike=(id:number,index:number)=>{
+				state.list[index].like=!state.list[index].like
+				growuprecordlike({id,userId:Number(state.userId),userName:getLocalStorage('nickName') as string})
+				.then(res=>{
+					state.list[index].likes=res.data
+				})
+			}
+			const deleteComment=(id:number)=>{
+				Dialog.confirm({
+					title: '',
+					message:
+						'确认删除该条动态？',
+				})
+				.then(() => {
+					growuprecordDelete({id})
+						.then(res=>{
+							if(res.code===200){
+								state.params.pageNo=1
+								onLoad()
+							}else{
+								Toast.fail('删除动态失败')
+							}
+							
+						})
+				})
+				
+			}
 			const onLoad = () => {
 				// 异步更新数据
 				growuprecordList(state.params).then(res => {
@@ -139,6 +174,9 @@
 						if (val.imgs) {
 							// debugger
 							val.imgs = JSON.parse(val.imgs)
+						}
+						if(val.likes.length){
+							val.like=val.likes.some(v=>v.userId==Number(state.userId))
 						}
 					})
 					if (state.params.pageNo === 1) {
@@ -153,16 +191,6 @@
 						state.finished = true
 					}
 				})
-				// setTimeout 仅做示例，真实场景中一般为 ajax 请求
-				setTimeout(() => {
-					// 加载状态结束
-					state.loading = false
-
-					// 数据全部加载完成
-					// if (state.list.length >= 40) {
-					//   state.finished = true;
-					// }
-				}, 1000)
 			}
 			const active = ref(0)
 			const PreviewImage = (arr: string[]) => {
@@ -226,7 +254,9 @@
 				PreviewImage,
 				showComment,
 				toComment,
-				sendMsg
+				sendMsg,
+				deleteComment,
+				commentLike
 			}
 		},
 		// components: {
@@ -272,12 +302,16 @@
 .comments{
 	&-bar{
 	height: 40px;
-	text-align: right;
+	display:flex;
+	justify-content: space-between;
 	margin-top: 10px;
 	}
 	&-icon{
-		margin-right:10px;
+		margin:0 10px;
 		font-size: 40px;
+		&.red{
+			color:#f14f09;
+		}
 	}
 	&-item{
 		display:flex;
