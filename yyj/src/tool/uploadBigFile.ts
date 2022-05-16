@@ -2,12 +2,25 @@ import axios from 'axios'
 import SparkMD5 from 'spark-md5'
 import { nextTick } from 'vue'
 import { Toast } from 'vant'
-function uploadBigHook(state:any) {
+interface stateModel {
+  showPicker: boolean
+  form: {
+    role: string;
+    userId: string;
+    nickName: string;
+    videoUrl:string
+  },
+  avatar:string,
+  rate:number,
+  showUploadProgress:boolean,
+  currentRate:number
+}
+function uploadBigHook(state:stateModel) {
   let ext = '',
     fileArr:Array<Blob> = [],
     uploadChuncks = [],
     md5Val = ''
-  const alreadyUpChuncks:{[propName:number]:Number}={}
+  const alreadyUpChuncks:{[propName:number]:number}={}
   let startTime=0
   async function uploadBig(file:any) {
     ext = file.name.substr(file.name.lastIndexOf('.') + 1)
@@ -35,7 +48,8 @@ function uploadBigHook(state:any) {
   function md5File(files:Array<Blob>) {
     const spark = new SparkMD5.ArrayBuffer();
     let fileReader=null as unknown as FileReader;
-    for (var i = 0; i < files.length; i++) {
+    let i = 0
+    for (; i < files.length; i++) {
       fileReader = new FileReader();
       fileReader.readAsArrayBuffer(files[i]);
     }
@@ -129,40 +143,40 @@ function uploadBigHook(state:any) {
       
     }
   }
-  async function uploadSlice(chunkIndex = 0) {
+  // async function uploadSlice(chunkIndex = 0) {
     
-    if(chunkIndex===fileArr.length-1){
-      mergeFile()
-      return
-    }
-    if (alreadyUpChuncks[chunkIndex ]) {
-      ++chunkIndex;
-      state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
-      uploadSlice(chunkIndex + 1)
-      return
-    }
-    const formData = new FormData();
-    formData.append("file", fileArr[chunkIndex] as Blob);
-    formData.append('type','upload')
-    formData.append('current',chunkIndex+'')
-    formData.append('total',fileArr.length +'')
+  //   if(chunkIndex===fileArr.length-1){
+  //     mergeFile()
+  //     return
+  //   }
+  //   if (alreadyUpChuncks[chunkIndex ]) {
+  //     ++chunkIndex;
+  //     state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
+  //     uploadSlice(chunkIndex + 1)
+  //     return
+  //   }
+  //   const formData = new FormData();
+  //   formData.append("file", fileArr[chunkIndex] as Blob);
+  //   formData.append('type','upload')
+  //   formData.append('current',chunkIndex+'')
+  //   formData.append('total',fileArr.length +'')
 
-    const data = await axios({
-      url: `/api/bigFileUpload?md5Val=${md5Val}`,
-      method: "post",
-      data: formData,
-    });
+  //   const data = await axios({
+  //     url: `/api/bigFileUpload?md5Val=${md5Val}`,
+  //     method: "post",
+  //     data: formData,
+  //   });
 
-    if (data.data.code == 200) {
-      if (chunkIndex < fileArr.length - 1) {
-        ++chunkIndex;
-        state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
-        uploadSlice(chunkIndex);
-      } else {
-        mergeFile();
-      }
-    }
-  }
+  //   if (data.data.code == 200) {
+  //     if (chunkIndex < fileArr.length - 1) {
+  //       ++chunkIndex;
+  //       state.rate = Math.round(((chunkIndex ) / fileArr.length) * 100)
+  //       uploadSlice(chunkIndex);
+  //     } else {
+  //       mergeFile();
+  //     }
+  //   }
+  // }
 
   async function mergeFile() {
     const param={

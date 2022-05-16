@@ -17,7 +17,7 @@
     "spark-md5": "^3.0.2",
     "ts-import-plugin": "^1.6.7",
     "vant": "^3.0.18",
-    "vue": "^3.0.0",
+    "vue": "^3.2.33",
     "vue-mocropper": "^2.0.1",
     "vue-router": "^4.0.0-0",
     "vuex": "^4.0.0-0"
