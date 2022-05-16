@@ -51,6 +51,10 @@
 					
 				</div>
 				<div class="comments-box" v-if="item.comments">
+					<div class="comments-likes" v-if="item.likes.length>0">
+						<van-icon name="like-o" />
+						<span class="comments-likesUser" v-for="v in item.likes" :key="v.userId">{{v.userName}}</span>
+					</div>
 					<div class="comments-item" v-for="v in JSON.parse(item.comments)" :key="v.comments+v.userId">
 						<span class="comments-name">{{v.nickName}}</span>
 						<div class="comments-words">: {{v.comments}}</div>
@@ -305,6 +309,20 @@
 	display:flex;
 	justify-content: space-between;
 	margin-top: 10px;
+	}
+	&-likes{
+		padding-bottom:10px;
+		border-bottom:1px solid #eee;
+		margin-bottom:10px;
+	}
+	&-likesUser{
+		margin:0 8px;
+		&:after{
+			content:','
+		}
+		&:last-child:after{
+			content:''
+		}
 	}
 	&-icon{
 		margin:0 10px;
