@@ -39,7 +39,7 @@
 		saveUnreadChatData,
 	} from '@/tool/tool'
 	import getSocket from '@/tool/socket'
-	import { msgtype } from '@/tool/type'
+	import { msgtype } from '@/types/type'
 	import chathook from '@/tool/hookchat'
 	import {  useRoute } from 'vue-router'
 	export default defineComponent({

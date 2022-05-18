@@ -8,14 +8,14 @@
 	<van-form @submit="onSubmit">
 		<van-cell-group inset>
 			<van-field
-				v-model="form.username"
+				v-model="state.form.username"
 				name="username"
 				label="用户名"
 				placeholder="用户名"
 				:rules="[{ required: true, message: '请填写用户名' }]"
 			/>
 			<van-field
-				v-model="form.password"
+				v-model="state.form.password"
 				type="password"
 				name="password"
 				label="密码"
@@ -24,23 +24,23 @@
 			/>
 		</van-cell-group>
 		<van-field
-			v-model="form.role"
+			v-model="state.form.role"
 			readonly
 			clickable
 			name="role"
 			label="选择器"
 			placeholder="点击选择您的角色"
-			@click="showPicker = true"
+			@click="state.showPicker = true"
 		/>
-		<van-popup v-model:show="showPicker" position="bottom">
+		<van-popup v-model:show="state.showPicker" position="bottom">
 			<van-picker
 				:columns="columns"
 				@confirm="onConfirm"
-				@cancel="showPicker = false"
+				@cancel="state.showPicker = false"
 			/>
 		</van-popup>
 		<van-field
-			v-model="form.nickName"
+			v-model="state.form.nickName"
 			name="nickName"
 			label="昵称"
 			placeholder="昵称"
@@ -53,15 +53,20 @@
 		</div>
 	</van-form>
 </template>
-<script lang="ts">
-	import { register } from '@/api/common.api'
+<script lang="ts" setup>
+	import { register } from '@/api/common.api';
 	import { registerInfo } from '@/types/common'
-	import { defineComponent, reactive, toRefs } from 'vue'
+	import {  reactive } from 'vue'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
 	import md5 from 'md5'
-	export default defineComponent({
-		setup() {
+	
+// 	type registerInfo={
+//   username:string,
+//   password:string,
+//   role:string,
+//   nickName:string
+// }
 			// type userInfo={
 			//   username:string,
 			//   password:string,
@@ -122,13 +127,6 @@
 			const onClickLeft = () => {
 				router.push('/login')
 			}
-			return {
-				...toRefs(state),
-				onSubmit,
-				columns,
-				onConfirm,
-				onClickLeft,
-			}
-		},
-	})
+
+
 </script>

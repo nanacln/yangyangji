@@ -1,5 +1,5 @@
 import axios ,{ AxiosInstance }from 'axios'
-import {commonData} from '@/tool/type'
+import {commonData} from '@/types/type'
 // import { stringify } from 'qs'
 
 const http: AxiosInstance = axios.create({

@@ -32,7 +32,7 @@
 <script lang="ts">
 	import { defineComponent, onBeforeUnmount, reactive, toRefs } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
-	import { msgtype } from '@/tool/type'
+	import { msgtype } from '@/types/type'
 	import {
 		getLocalStorage,
 		setLocalStorage,

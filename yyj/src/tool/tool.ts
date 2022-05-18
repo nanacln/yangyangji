@@ -1,4 +1,4 @@
-import {stringType,msgtype} from '@/tool/type'
+import {stringType,msgtype} from '@/types/type'
 export function dateFormat(fmt:string, date:Date):string {
   let ret;
   const opt:stringType = {

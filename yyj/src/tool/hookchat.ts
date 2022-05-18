@@ -1,5 +1,5 @@
 import {  nextTick, watch } from 'vue'
-import {stateModel} from '@/tool/type' 
+import {stateModel} from '@/types/type' 
 import {  reactive } from 'vue'
 	import { useRouter, useRoute } from 'vue-router'
   import {
