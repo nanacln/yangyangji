@@ -26,15 +26,3 @@ export interface commentsModel{
   id:number,
   comments:string
 }
-export type aa={
-  name:string
-}
-export type stuInfo={
-  name:string,
-  age:number,
-  grade:string
-}
-export type eri={
-  dd:string;
-  sd:number
-}

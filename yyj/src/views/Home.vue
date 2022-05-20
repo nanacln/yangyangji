@@ -98,7 +98,6 @@
 		setLocalStorage
 	} from '@/tool/tool'
 	import { ImagePreview ,Dialog, Toast} from 'vant'
-	import test from '@/components/test.vue'
 	// import io from 'socket.io-client'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
@@ -266,9 +265,6 @@
 				deleteComment,
 				commentLike
 			}
-		},
-		components: {
-			test,
 		},
 	})
 </script>

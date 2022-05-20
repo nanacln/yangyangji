@@ -52,7 +52,7 @@
 	import { reactive, toRefs, defineComponent, ref ,computed} from 'vue'
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
-	import { growuprecordSave, imgUpload,videoUpload } from '@/api/common.api'
+	import { growuprecordSave, imgUpload } from '@/api/common.api'
 	import { getLocalStorage } from '@/tool/tool'
 	import uploadBigHook from '@/tool/uploadBigFile'
 	export default defineComponent({

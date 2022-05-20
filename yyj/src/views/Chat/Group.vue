@@ -30,8 +30,7 @@
 	</div>
 </template>
 <script lang="ts">
-	import { defineComponent, onBeforeUnmount, reactive, toRefs } from 'vue'
-	import { useRouter, useRoute } from 'vue-router'
+	import { defineComponent, onBeforeUnmount,  toRefs } from 'vue'
 	import { msgtype } from '@/types/type'
 	import {
 		getLocalStorage,
