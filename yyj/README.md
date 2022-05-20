@@ -1,4 +1,4 @@
-# zhaopin-ts
+# vue3.2-ts
 
 ## Project setup
 ```

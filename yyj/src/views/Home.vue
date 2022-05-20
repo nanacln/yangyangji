@@ -1,7 +1,10 @@
 <template>
 	<div class="home">
+		
 		<van-nav-bar :fixed="true" title="扬扬的日常" />
+		
 		<div class="space"></div>
+		<test />
 		<router-link to="/record/add" class="add-box"
 			><van-icon class="add-btn" name="add-o"
 		/></router-link>
@@ -95,6 +98,7 @@
 		setLocalStorage
 	} from '@/tool/tool'
 	import { ImagePreview ,Dialog, Toast} from 'vant'
+	import test from '@/components/test.vue'
 	// import io from 'socket.io-client'
 	// @ is an alias to /src
 	// import HelloWorld from '@/components/HelloWorld.vue'
@@ -263,9 +267,9 @@
 				commentLike
 			}
 		},
-		// components: {
-		// 	HelloWorld,
-		// },
+		components: {
+			test,
+		},
 	})
 </script>
 <style lang="scss" scoped>

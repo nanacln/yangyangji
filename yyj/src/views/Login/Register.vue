@@ -60,7 +60,14 @@
 	import { useRouter } from 'vue-router'
 	import { Toast } from 'vant'
 	import md5 from 'md5'
-	
+	import {stuInfo} from '@/types/type'
+	let stu:stuInfo={
+  name:'sss',
+  age:10,
+  grade:'di'
+}
+console.log(stu);
+
 // 	type registerInfo={
 //   username:string,
 //   password:string,
