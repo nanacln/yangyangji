@@ -146,8 +146,21 @@ export default defineComponent({
 				state.showPicker = false
 			}
 			const active = ref(2)
+			
 			const update=()=>{
-				updateUser(state.form)
+				const formParam:updateUserInfo={
+				role:'',
+				nickName:'',
+				userId:getLocalStorage('userId')
+			}
+			if(state.form.role===getLocalStorage('role')&&state.form.nickName===getLocalStorage('nickName')){
+				Toast('您没有修改用户信息')
+				return
+			}else{
+				formParam.role=state.form.role===getLocalStorage('role')?'':state.form.role
+				formParam.nickName=state.form.nickName===getLocalStorage('nickName')?'':state.form.nickName
+			}
+				updateUser(formParam)
 				.then(res=>{
 					if(res.code===200){
 						setLocalStorage('role',state.form.role)

@@ -494,10 +494,16 @@ app.get('/api/userlist', (req, res) => {
 })
 app.post('/api/updateUser', (req, res) => {
 	const { userId, nickName, role } = req.body
-	
+	const userChange={}
+	if(nickName){
+		userChange.nickName=nickName
+	}
+	if(role){
+		userChange.role=role
+	}
 	UserList.updateOne(
 		{ userId: Number(userId) },
-		{ $set: { nickName: nickName, role: role } },
+		{ $set: userChange },
 		(err, data) => {
 			if (err) {
 				console.log(err)
@@ -514,8 +520,37 @@ app.post('/api/updateUser', (req, res) => {
 		if(err){
 			return
 		}
-		if(data[0].nickName!==nickName){
-
+		if(nickName){
+			GrowUpRecord.find({},(err,data)=>{
+				if (err) {
+					console.log(err)
+					return
+				}
+				data.forEach(v=>{
+					if(v.likes.length){
+						const changeInfo={}
+						if(v.userId==userId){
+							changeInfo.nickName=nickName
+						}
+						for(let i=0;i<v.likes.length;i++){
+							if(v.likes[i].userId==userId){
+								v.likes[i].userName=nickName
+								changeInfo.likes=v.likes
+								
+								break
+							}
+						}
+						if(Object.keys(changeInfo).length){
+							GrowUpRecord.updateOne({id:v.id},{ $set: changeInfo },(err,data)=>{
+								if(err){
+									console.log(err);
+									return
+								}
+							})
+						}
+					}
+				})
+			})
 		}
 	})
 
