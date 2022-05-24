@@ -27,8 +27,8 @@ const mergeFile = require('./tool/util');
 //引入mongodb
 // const { MongoClient } = require('mongodb') //定义数据库连接的地址
 const mongoose = require('mongoose')
-// mongoose.connect('mongodb://106.14.172.134:30000/yangyangji', {
-mongoose.connect('mongodb://nana:123456@127.0.0.1:30000/yangyangji', {
+mongoose.connect('mongodb://106.14.172.134:30000/yangyangji', {
+// mongoose.connect('mongodb://nana:123456@127.0.0.1:30000/yangyangji', {
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 })
@@ -527,27 +527,39 @@ app.post('/api/updateUser', (req, res) => {
 					return
 				}
 				data.forEach(v=>{
+					const changeInfo={}
+					if(v.userId==userId){
+						changeInfo.nickName=nickName
+					}
 					if(v.likes.length){
-						const changeInfo={}
-						if(v.userId==userId){
-							changeInfo.nickName=nickName
-						}
 						for(let i=0;i<v.likes.length;i++){
 							if(v.likes[i].userId==userId){
 								v.likes[i].userName=nickName
 								changeInfo.likes=v.likes
-								
 								break
 							}
 						}
-						if(Object.keys(changeInfo).length){
-							GrowUpRecord.updateOne({id:v.id},{ $set: changeInfo },(err,data)=>{
-								if(err){
-									console.log(err);
-									return
-								}
-							})
+					}
+					let commentsFlag=false
+					if(v.comments&&v.comments.length){
+						const arr=JSON.parse(v.comments)
+						for(let i=0;i<arr.length;i++){
+							if(arr[i].userId==userId){
+								arr[i].nickName=nickName
+								commentsFlag=true
+							}
 						}
+						if(commentsFlag){
+							changeInfo.comments=JSON.stringify(arr)
+						}
+					}
+					if(Object.keys(changeInfo).length){
+						GrowUpRecord.updateOne({id:v.id},{ $set: changeInfo },(err,data)=>{
+							if(err){
+								console.log(err);
+								return
+							}
+						})
 					}
 				})
 			})

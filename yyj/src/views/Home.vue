@@ -43,6 +43,7 @@
 				<div v-if="item.videoUrl">
 					<video class="video-item" controls :src="imagePrefix+item.videoUrl"></video>
 				</div>
+				
 				<div class="comments-bar">
 					<van-icon v-if="state.userId == item.userId" name="delete-o" class="comments-icon" @click="deleteComment(item.id)" />
 					<div v-else></div>
@@ -53,15 +54,17 @@
 					</div>
 					
 				</div>
-				<div class="comments-box" v-if="item.comments">
-					<div class="comments-likes" v-if="item.likes.length>0">
+				<div class="comments-box" v-if="item.comments||item.likes.length>0">
+					<div class="comments-likes" :class="{noborder:!item.comments}" v-if="item.likes.length>0">
 						<van-icon name="like-o" />
 						<span class="comments-likesUser" v-for="v in item.likes" :key="v.userId">{{v.userName}}</span>
 					</div>
-					<div class="comments-item" v-for="v in JSON.parse(item.comments)" :key="v.comments+v.userId">
-						<span class="comments-name">{{v.nickName}}</span>
-						<div class="comments-words">: {{v.comments}}</div>
-					</div>
+					<template v-if="item.comments">
+						<div class="comments-item" v-for="v in JSON.parse(item.comments)" :key="v.comments+v.userId">
+							<span class="comments-name">{{v.nickName}}</span>
+							<div class="comments-words">: {{v.comments}}</div>
+						</div>
+					</template>
 				</div>
 			</div>
 		</van-list>
@@ -314,6 +317,10 @@
 		padding-bottom:10px;
 		border-bottom:1px solid #eee;
 		margin-bottom:10px;
+		&.noborder{
+			border:none;
+			margin-bottom:0;
+		}
 	}
 	&-likesUser{
 		margin:0 8px;

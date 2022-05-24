@@ -15,10 +15,10 @@
 			label="宝宝记"
 			type="textarea"
 			maxlength="100"
-			placeholder="请输入宝宝的伟大的小进步"
+			placeholder="请输入宝宝的伟大小进步"
 			show-word-limit
 		/>
-		<van-field name="uploader" label="文件上传">
+		<van-field name="uploader" label="图片上传">
 			<template #input>
 				<van-uploader v-model="showImgs" :after-read="afterRead" />
 			</template>
