@@ -70,7 +70,7 @@ function uploadBigHook(state:stateModel) {
       total:1
     }
     const data = await axios({
-      url: `/api/bigFileUpload`,
+      url: `/api/upload/bigFile`,
       method: "post",
       data: param,
     });
@@ -114,7 +114,7 @@ function uploadBigHook(state:stateModel) {
       formData.append('total',fileArr.length+'')
 
        axios({
-        url: `/api/bigFileUpload?md5Val=${md5Val}`,
+        url: `/api/upload/bigFile?md5Val=${md5Val}`,
         method: "post",
         data: formData,
       }).then(data=>{
@@ -187,7 +187,7 @@ function uploadBigHook(state:stateModel) {
     }
     const data = await axios(
       {
-        url:`/api/bigFileUpload`,
+        url:`/api/upload/bigFile`,
         method:'POST',
         data:param
       }
