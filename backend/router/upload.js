@@ -1,6 +1,8 @@
 const express=require("express")
 const fs = require('fs')
-const dirPath = 'static/';
+// const dirPath = 'static/'; //与下面的等价
+const path = require("path");
+const dirPath = path.join(__dirname, "../static/");;
 const formidable = require('formidable')
 const router = express.Router()
 const mergeFile = require('../tool/util');
