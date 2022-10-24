@@ -6,6 +6,7 @@ const dirPath = path.join(__dirname, "../static/");;
 const formidable = require('formidable')
 const router = express.Router()
 const mergeFile = require('../tool/util');
+const UserList =require('../models/UserList.js')
 
 
 router.post('/file', (req, res) => {

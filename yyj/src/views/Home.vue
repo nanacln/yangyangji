@@ -151,6 +151,11 @@
 
 			// })
 			const commentLike=(id:number,index:number)=>{
+				if(!(getLocalStorage('nickName'))){
+					setLocalStorage("ucm_curUrl", '/home');
+					router.push('/login')
+					return
+				}
 				state.list[index].like=!state.list[index].like
 				growuprecordlike({id,userId:Number(state.userId),userName:getLocalStorage('nickName') as string})
 				.then(res=>{

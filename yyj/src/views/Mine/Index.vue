@@ -102,8 +102,11 @@ export default defineComponent({
 					setLocalStorage('role',role)
 					state.form.nickName=nickName
 					setLocalStorage('nickName',nickName)
-					state.avatar=avatar as string
-					setLocalStorage('avatar',avatar as string)
+					if(avatar){
+						state.avatar=avatar as string
+						setLocalStorage('avatar',avatar as string)
+					}
+					
 				}
 				
 			})
